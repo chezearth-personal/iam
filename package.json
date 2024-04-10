@@ -1,0 +1,42 @@
+{
+  "name": "iam",
+  "version": "1.0.0",
+  "description": "Identity Access Management",
+  "main": "index.js",
+  "scripts": {
+    "start": "ts-node src/index.ts",
+    "build": "shx rm -rf dist && tsc",
+    "serve": "tsc-watch --onSuccess \"nodemon dist/index.js\"",
+    "test": "test"
+  },
+  "keywords": [
+    "identity",
+    "access",
+    "authorisation",
+    "authorization",
+    "users",
+    "user"
+  ],
+  "author": "Charles W Rethman",
+  "license": "MIT",
+  "dependencies": {
+    "compression": "^1.7.4",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "helmet": "^7.1.0",
+    "joi": "^17.12.3",
+    "morgan": "^1.10.0",
+    "typescript": "^5.4.4"
+  },
+  "devDependencies": {
+    "@types/compression": "^1.7.5",
+    "@types/dotenv": "^8.2.0",
+    "@types/express": "^4.17.21",
+    "@types/helmet": "^4.0.0",
+    "@types/joi": "^17.2.3",
+    "@types/morgan": "^1.9.9",
+    "nodemon": "^3.1.0",
+    "tsc-watch": "^6.2.0",
+    "tslint": "^6.1.3"
+  }
+}
