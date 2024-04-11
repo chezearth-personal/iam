@@ -1,2 +1,2 @@
-export * from './model.entity';
-export * from './user.entity';
+export { Model } from './model.entity';
+export { RoleEnumType, User } from './user.entity';

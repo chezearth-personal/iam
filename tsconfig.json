@@ -7,13 +7,15 @@
     "moduleResolution": "node",
     "sourceMap": true,
     "outDir": "dist",
-    "baseUrl": "src",
+    "baseUrl": ".",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "paths": {
       "*": [
         "node_modules/*",
-        "src/types/*"]
+        "src/types/*",
+        "src/*"
+      ]
     }
   },
   "include": [
