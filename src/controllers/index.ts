@@ -1,7 +1,7 @@
 export {
   registerUserHandler,
   loginUserHandler,
-  registerAccessTokenHandler,
+  refreshAccessTokenHandler,
   logoutHandler
 } from './auth.controller';
 export { getMeHandler } from './user.controller';

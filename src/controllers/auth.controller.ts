@@ -18,7 +18,7 @@ const cookieOptions: CookieOptions = {
 export {
   registerUserHandler,
   loginUserHandler,
-  registerAccessTokenHandler,
+  refreshAccessTokenHandler,
   logoutHandler,
 };
 
@@ -102,7 +102,7 @@ async function loginUserHandler(
 
 }
 
-async function registerAccessTokenHandler(
+async function refreshAccessTokenHandler(
   req: Request,
   res: Response,
   next: NextFunction
