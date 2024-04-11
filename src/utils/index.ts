@@ -1,2 +1,2 @@
 export { AppDataSource } from './data-source';
-export { signJwt } from './jwt';
+export { signJwt, verifyJwt } from './jwt';
