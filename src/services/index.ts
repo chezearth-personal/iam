@@ -1,1 +1,7 @@
-export { createUser, findUserByEmail, findUserById, findUser } from './user.service';
+export {
+  createUser,
+  findUserByEmail,
+  findUserById,
+  findUser,
+  signTokens
+} from './user.service';
