@@ -4,9 +4,9 @@ import {
   logoutHandler,
   refreshAccessTokenHandler,
   registerUserHandler
-} from 'controllers';
-import { deserialiseUser, requireUser, validate } from 'middleware';
-import { createUserSchema, loginUserSchema } from 'schema';
+} from '../controllers';
+import { deserialiseUser, requireUser, validate } from '../middleware';
+import { createUserSchema, loginUserSchema } from '../schema';
 
 const AuthRouter = express.Router();
 /** Reggister user */

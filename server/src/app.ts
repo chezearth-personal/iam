@@ -4,11 +4,12 @@ import config from 'config';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-import { AppDataSource, AppError, validateEnv, redisClient } from 'utils';
-import { AuthRouter, UserRouter } from 'routes';
+import { AppDataSource, AppError, validateEnv, redisClient } from './utils';
+import { AuthRouter, UserRouter } from './routes';
 
 AppDataSource.initialize()
   .then(async () => {
+    console.log('validating env...');
     /** Validate env */
     validateEnv();
     const app = express();

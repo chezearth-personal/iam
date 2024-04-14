@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
-import { findUserById } from 'services';
-import { AppError, redisClient, verifyJwt } from 'utils';
+import { findUserById } from '../services';
+import { AppError, redisClient, verifyJwt } from '../utils';
 
 export { deserialiseUser };
 

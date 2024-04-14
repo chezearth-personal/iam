@@ -6,9 +6,9 @@ import {
   findUserByEmail,
   findUserById,
   signTokens
-} from 'services';
-import { AppError, redisClient, signJwt, verifyJwt } from 'utils';
-import { User } from 'entities';
+} from '../services';
+import { AppError, redisClient, signJwt, verifyJwt } from '../utils';
+import { User } from '../entities';
 
 const cookieOptions: CookieOptions = {
   httpOnly: true,
@@ -119,7 +119,7 @@ async function refreshAccessTokenHandler(
       'refreshTokenPublicKey'
     );
     /** Check if the user has a valid session */
-    const session = await redisClient.get(decoded.sub);
+    const session = decoded && await redisClient.get(decoded.sub);
     if (!session) {
       return next(new AppError(403, message));
     }
