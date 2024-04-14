@@ -1,0 +1,22 @@
+name: iam
+
+services:
+  postgres: 
+    image: postgres:latest
+    ports:
+      - '6500:5432'
+    volumes:
+      - postgresDB:/var/lib/postgresql/data
+    env_file:
+      - ./server/.env
+  redis:
+    image: redis:alpine
+    container_name: redis
+    ports:
+      - '6379:6379'
+    volumes:
+      - 'redisDB:/data'
+
+volumes:
+  postgresDB:
+  redisDB:
