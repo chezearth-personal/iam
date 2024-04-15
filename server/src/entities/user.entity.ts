@@ -2,13 +2,14 @@ import { Entity, Column, Index, BeforeInsert } from 'typeorm';
 import { compare, hash } from 'bcryptjs';
 import { Model } from './'
 
-enum RoleEnumType {
+export enum RoleEnumType {
   USER = 'user',
   ADMIN = 'admin'
 }
 
 @Entity('users')
-class User extends Model {
+export class User extends Model {
+
   @Column()
   firstName: string;
 
@@ -51,5 +52,5 @@ class User extends Model {
   }
 }
 
-export { RoleEnumType };
-export { User };
+// export { RoleEnumType };
+// export { User };

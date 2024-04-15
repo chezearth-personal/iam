@@ -11,7 +11,7 @@
     "useUnknownInCatchVariables": false,
     "skipLibCheck": true,
     "outDir": "./build",
-    "rootDir": "./src",
+    "rootDir": ".",
     "baseUrl": "./src"
   }
 }

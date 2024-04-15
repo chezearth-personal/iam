@@ -45,14 +45,17 @@ async function registerUserHandler(
   res: Response,
   next: NextFunction
 ) {
+  console.log('registerUserHandler...');
   try {
     const { firstName, lastName, password, email } = req.body;
+    console.log('firstName =', firstName, 'lastName =', lastName, 'email =', email);
     const user = await createUser({
       firstName,
       lastName,
       email: email.toLowerCase(),
       password
     });
+    console.log('user =', user);
     res.status(201).json({
       status: 'success',
       data: {
@@ -60,6 +63,7 @@ async function registerUserHandler(
       }
     });
   } catch (error) {
+    console.log('error =', error);
     if (error.code === '23505') {
       return res.status(409).json({
         status: 'fail',

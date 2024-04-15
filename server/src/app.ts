@@ -9,9 +9,15 @@ import { AuthRouter, UserRouter } from './routes';
 
 AppDataSource.initialize()
   .then(async () => {
-    console.log('validating env...');
+    // console.log('validating env...');
     /** Validate env */
     validateEnv();
+    // console.log('process.env.NODE_ENV =', process.env.NODE_ENV);
+    // console.log('process.env.PORT =', process.env.PORT);
+    // console.log('process.env.POSTGRES_HOST =', process.env.POSTGRES_HOST);
+    // console.log('process.env.POSTGRES_PORT =', process.env.POSTGRES_PORT);
+    // console.log('process.env.POSTGRES_USER =', process.env.POSTGRES_USER);
+    // console.log('process.env.POSTGRES_DB =', process.env.POSTGRES_DB);
     const app = express();
     
     /** 1. Body parser */
