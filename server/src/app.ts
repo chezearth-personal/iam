@@ -4,22 +4,27 @@ import config from 'config';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
+import nodemailer from 'nodemailer';
 import { AppDataSource, AppError, validateEnv, redisClient } from './utils';
 import { AuthRouter, UserRouter } from './routes';
+
+// (async function() {
+  // const credentials = await nodemailer.createTestAccount();
+  // console.log(credentials);
+// })();
 
 AppDataSource.initialize()
   .then(async () => {
     // console.log('validating env...');
     /** Validate env */
     validateEnv();
-    // console.log('process.env.NODE_ENV =', process.env.NODE_ENV);
-    // console.log('process.env.PORT =', process.env.PORT);
-    // console.log('process.env.POSTGRES_HOST =', process.env.POSTGRES_HOST);
-    // console.log('process.env.POSTGRES_PORT =', process.env.POSTGRES_PORT);
-    // console.log('process.env.POSTGRES_USER =', process.env.POSTGRES_USER);
-    // console.log('process.env.POSTGRES_DB =', process.env.POSTGRES_DB);
     const app = express();
-    
+
+    /** TEMPLATE ENGINE */
+    app.set('view engine', 'pug');
+    app.set('views', `${__dirname}/views`);
+
+    /** MIDDLEWARE */
     /** 1. Body parser */
     app.use(express.json({ limit: '10kb' }));
     /** 2. Logger */
@@ -34,12 +39,12 @@ AppDataSource.initialize()
       })
     );
 
-    /** Routes */
+    /** ROUTES */
     app.use('/api/auth/', AuthRouter);
     app.use('/api/users/', UserRouter);
 
-    /** Health checker */
-    app.get('/api/health-checker', async (_, res: Response) => {
+    /** HEALTH CHECK */
+    app.get('/api/health-check', async (_, res: Response) => {
       const message = await redisClient.get('try');
       res.status(200).json({
         status: 'success',
@@ -47,12 +52,12 @@ AppDataSource.initialize()
       });
     });
 
-    /** Unhandled route */
+    /** UNHANDLED ROUTE */
     app.use('*', (req: Request, res: Response, next: NextFunction) => {
       next(new AppError(404, `Route ${req.originalUrl} not found`));
     })
 
-    /** Global error handler */
+    /** GLOBAL ERROR HANDLER */
     app.use(
       (error: AppError, req: Request, res: Response, next: NextFunction) => {
         error.status = error.status || 'error';

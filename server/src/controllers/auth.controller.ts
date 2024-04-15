@@ -48,14 +48,14 @@ async function registerUserHandler(
   console.log('registerUserHandler...');
   try {
     const { firstName, lastName, password, email } = req.body;
-    console.log('firstName =', firstName, 'lastName =', lastName, 'email =', email);
+    // console.log('firstName =', firstName, 'lastName =', lastName, 'email =', email);
     const user = await createUser({
       firstName,
       lastName,
       email: email.toLowerCase(),
       password
     });
-    console.log('user =', user);
+    // console.log('user =', user);
     res.status(201).json({
       status: 'success',
       data: {
