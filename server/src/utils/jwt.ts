@@ -7,16 +7,24 @@ export { signJwt, verifyJwt };
 function signJwt(
   payload: Object,
   keyName: 'accessTokenPrivateKey' | 'refreshTokenPrivateKey',
-  options?: SignOptions
+  options: SignOptions
 ) {
+  // console.log('payload =', payload);
+  // console.log('keyName =', keyName);
+  // console.log('config.get(keyName) =', config.get<string>(keyName));
   const privateKey = Buffer.from(
     config.get<string>(keyName),
     'base64'
   ).toString('ascii');
-  return jwt.sign(payload, privateKey, {
+  // console.log('privateKey =', privateKey);
+  // console.log('options =', options);
+  // console.log('(options && options) =', (options && options));
+  const signedJwt = jwt.sign(payload, privateKey, {
     ...(options && options),
     algorithm: 'RS256'
   });
+  // console.log('newJwt =', newJwt);
+  return signedJwt;
 }
 
 function verifyJwt <T>(

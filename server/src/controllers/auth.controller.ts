@@ -87,7 +87,11 @@ async function loginUserHandler(
       return next(new AppError(400, 'Invalid email or password'));
     }
     /** 2. Sign access or refresh tokens */
+    console.log('Logging in ...');
+    // console.log('user =', user);
     const { access_token, refresh_token } = await signTokens(user);
+    // console.log('access_token =', access_token);
+    console.log('refresh_token =', refresh_token);
     /** 3. Add cookies */
     res.cookie('access_token', access_token, accessTokenCookieOptions);
     res.cookie('refresh_token', refresh_token, refreshTokenCookieOptions);

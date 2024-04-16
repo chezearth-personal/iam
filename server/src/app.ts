@@ -1,11 +1,19 @@
 import 'dotenv/config';
 import express, { NextFunction, Request, Response } from 'express';
 import config from 'config';
-import morgan from 'morgan';
+// import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import nodemailer from 'nodemailer';
-import { AppDataSource, AppError, validateEnv, redisClient } from './utils';
+import {
+  AppDataSource,
+  AppError,
+  errorHandler,
+  logger,
+  redisClient,
+  successHandler,
+  validateEnv
+} from './utils';
 import { AuthRouter, UserRouter } from './routes';
 
 // (async function() {
@@ -28,7 +36,9 @@ AppDataSource.initialize()
     /** 1. Body parser */
     app.use(express.json({ limit: '10kb' }));
     /** 2. Logger */
-    if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
+    app.use(successHandler);
+    app.use(errorHandler);
+    // if (process.env.NODE_ENV === 'development') app.use(logger(morgan('dev')));
     /** 3. Cookie parser */
     app.use(cookieParser());
     /** 4. CORS */
@@ -72,7 +82,7 @@ AppDataSource.initialize()
     /** Start the server */
     const port = config.get<number>('port');
     app.listen(port);
-    console.log(`Server started on port ${port}`);
+    logger.log('INFO',`Server started on port ${port}`);
     
   })
   .catch(error => {
