@@ -39,3 +39,7 @@ yarn-error.log*
 
 # uploads/ directory
 */**/uploads
+
+# test files
+*/**/test.html
+test.html

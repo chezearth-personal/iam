@@ -48,14 +48,15 @@ class Email {
 
   private async send(template: string, subject: string) {
     /** Generate HTML template based on the template string */
-    logger.log('DEBUG', `template = ${template}, subject = ${subject}`);
-    logger.log('DEBUG', `pug file = ${__dirname}/../views/${template}.pug`);
+    // logger.log('DEBUG', `template = ${template}, subject = ${subject}`);
+    // logger.log('DEBUG', `pug file = ${__dirname}/../views/${template}.pug`);
+    // const compiledFunction = pug.compileFile(`${__dirname}/../views/${template}.pug`);
     const html = pug.renderFile(`${__dirname}/../views/${template}.pug`, {
       firstname: this.firstname,
       subject,
       url: this.url,
     });
-    logger.log('DEBUG', `html = ${html}`);
+    // logger.log('DEBUG', `html = ${html}`);
     /** Create email options */
     const mailOptions = {
       from: this.from,
@@ -64,10 +65,10 @@ class Email {
       text: convert(html),
       html
     };
-    logger.log('DEBUG', `mailOptions = ${JSON.stringify(mailOptions)}`);
+    // logger.log('DEBUG', `mailOptions = ${JSON.stringify(mailOptions)}`);
     /** Send email */
-    // const info = await this.newTransport().sendMail(mailOptions);
-    // logger.log('DEBUG', nodemailer.getTestMessageUrl(info));
+    const info = await this.newTransport().sendMail(mailOptions);
+    logger.log('DEBUG', nodemailer.getTestMessageUrl(info));
   }
 
   /** ? Method to send emails */
