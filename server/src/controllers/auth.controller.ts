@@ -62,12 +62,14 @@ async function registerUserHandler(
     });
     const { hashedVerificationCode, verificationcode } = User.createVerificationCode();
     newUser.verificationcode = hashedVerificationCode;
+    logger.log('DEBUG', JSON.stringify(newUser));
     await newUser.save();
 
     /** Send verification email */
     const redirectUrl = `${config.get<string>(
       'origin'
     )}/verifyemail/${verificationcode}`;
+    logger.log('DEBUG', `redirectUrl = ${redirectUrl}`);
     try {
       await new Email(newUser, redirectUrl).sendVerificationCode();
       res.status(201).json({
