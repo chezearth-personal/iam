@@ -7,7 +7,7 @@ import {
   findUserById,
   signTokens
 } from '../services';
-import { AppError, redisClient, signJwt, verifyJwt } from '../utils';
+import { AppError, logger, redisClient, signJwt, verifyJwt } from '../utils';
 import { User } from '../entities';
 
 const cookieOptions: CookieOptions = {
@@ -45,17 +45,14 @@ async function registerUserHandler(
   res: Response,
   next: NextFunction
 ) {
-  console.log('registerUserHandler...');
   try {
     const { firstName, lastName, password, email } = req.body;
-    // console.log('firstName =', firstName, 'lastName =', lastName, 'email =', email);
     const user = await createUser({
       firstName,
       lastName,
       email: email.toLowerCase(),
       password
     });
-    // console.log('user =', user);
     res.status(201).json({
       status: 'success',
       data: {
@@ -63,7 +60,7 @@ async function registerUserHandler(
       }
     });
   } catch (error) {
-    console.log('error =', error);
+    logger.log('ERROR', error);
     if (error.code === '23505') {
       return res.status(409).json({
         status: 'fail',
@@ -87,11 +84,7 @@ async function loginUserHandler(
       return next(new AppError(400, 'Invalid email or password'));
     }
     /** 2. Sign access or refresh tokens */
-    console.log('Logging in ...');
-    // console.log('user =', user);
     const { access_token, refresh_token } = await signTokens(user);
-    // console.log('access_token =', access_token);
-    console.log('refresh_token =', refresh_token);
     /** 3. Add cookies */
     res.cookie('access_token', access_token, accessTokenCookieOptions);
     res.cookie('refresh_token', refresh_token, refreshTokenCookieOptions);

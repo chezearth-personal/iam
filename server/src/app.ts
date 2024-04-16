@@ -1,7 +1,6 @@
 import 'dotenv/config';
 import express, { NextFunction, Request, Response } from 'express';
 import config from 'config';
-// import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import nodemailer from 'nodemailer';
@@ -18,12 +17,11 @@ import { AuthRouter, UserRouter } from './routes';
 
 // (async function() {
   // const credentials = await nodemailer.createTestAccount();
-  // console.log(credentials);
+  // logger.log('TRACE', credentials)
 // })();
 
 AppDataSource.initialize()
   .then(async () => {
-    // console.log('validating env...');
     /** Validate env */
     validateEnv();
     const app = express();
@@ -38,7 +36,6 @@ AppDataSource.initialize()
     /** 2. Logger */
     app.use(successHandler);
     app.use(errorHandler);
-    // if (process.env.NODE_ENV === 'development') app.use(logger(morgan('dev')));
     /** 3. Cookie parser */
     app.use(cookieParser());
     /** 4. CORS */
@@ -79,12 +76,12 @@ AppDataSource.initialize()
       }
     );
 
-    /** Start the server */
+    /** START THE SERVER */
     const port = config.get<number>('port');
     app.listen(port);
     logger.log('INFO',`Server started on port ${port}`);
     
   })
   .catch(error => {
-    console.log(error);
+    logger.log('ERROR', error);
   });

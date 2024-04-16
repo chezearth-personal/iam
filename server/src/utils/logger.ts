@@ -25,27 +25,27 @@ const errorHandler = morgan(errorResponseFormat, {
 
 const levels = {
   levels: {
-    ERROR: 0,
-    WARN: 1,
-    INFO: 2,
-    HTTP: 3,
-    VERBOSE: 4,
+    FATAL: 0,
+    ERROR: 1,
+    WARN: 2,
+    INFO: 3,
+    HTTP: 4,
     DEBUG: 5,
-    SILLY: 6
+    TRACE: 6
   },
   colors: {
-    ERROR: 'red',
+    FATAL: 'bold red cyanBG',
+    ERROR: 'bold red',
     WARN: 'yellow',
     INFO: 'cyan',
     HTTP: 'magenta',
-    VERBOSE: 'grey',
     DEBUG: 'blue',
-    SILLY: 'pink'
+    TRACE: 'green'
   }
 }
 const logger = createLogger({
   levels: levels.levels,
-  level: process.env.NODE_ENV === 'development' ? 'SILLY' : 'HTTP',
+  level: process.env.NODE_ENV === 'development' ? 'TRACE' : 'HTTP',
   format: format.combine(
     enumerateErrorFormat(),
     format.timestamp(),

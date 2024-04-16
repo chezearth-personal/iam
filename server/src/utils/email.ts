@@ -3,6 +3,7 @@ import config from 'config';
 import pug from 'pug';
 import { convert } from 'html-to-text';
 import { User } from '../entities';
+import { logger } from '../utils';
 
 const smtp = config.get<{
   host: string;
@@ -27,7 +28,7 @@ class Email {
 
   private newTransport() {
     // if (process.env.NODE_ENV === 'production') {
-    //   console.log('Hello');
+    //   logger.log('DEBUG', 'Hello');
     // }
 
     return nodemailer.createTransport({
@@ -58,7 +59,7 @@ class Email {
     };
     /** Send email */
     const info = await this.newTransport().sendMail(mailOptions);
-    console.log(nodemailer.getTestMessageUrl(info));
+    logger.log('DEBUG', nodemailer.getTestMessageUrl(info));
   }
 
   /** ? Method to send emails */
