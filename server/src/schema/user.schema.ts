@@ -3,8 +3,8 @@ import { RoleEnumType } from '../entities';
 
 const createUserSchema = object({
   body: object({
-    firstName: string({ required_error: 'First name is required' }),
-    lastName: string({ required_error: 'Last name is required' }),
+    firstname: string({ required_error: 'First name is required' }),
+    lastname: string({ required_error: 'Last name is required' }),
     email: string({ required_error: 'Email address is required' })
       .email('Invalid email address'),
     password: string({ required_error: 'Password is required' })

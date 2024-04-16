@@ -1,20 +1,23 @@
+import crypto from 'crypto';
 import { Entity, Column, Index, BeforeInsert } from 'typeorm';
 import { compare, hash } from 'bcryptjs';
 import { Model } from './'
 
-export enum RoleEnumType {
+export { RoleEnumType, User };
+
+enum RoleEnumType {
   USER = 'user',
   ADMIN = 'admin'
 }
 
 @Entity('users')
-export class User extends Model {
+class User extends Model {
 
   @Column()
-  firstName: string;
+  firstname: string;
 
   @Column()
-  lastName: string;
+  lastname: string;
 
   @Index('email_index')
   @Column({ unique: true })
@@ -33,6 +36,13 @@ export class User extends Model {
   @Column({ default: false })
   verified: boolean;
 
+  @Index('verificationcode_index')
+  @Column({
+    type: 'text',
+    nullable: true
+  })
+  verificationcode!: string | null;
+
   /** ? Hash password before saving to database */
   @BeforeInsert()
   async hashPassword() {
@@ -47,10 +57,16 @@ export class User extends Model {
     return await compare(candidatePassword, hashedPassword);
   }
 
+  static createVerificationCode() {
+    const verificationcode = crypto.randomBytes(32).toString('hex');
+    const hashedVerificationCode = crypto
+      .createHash('sha256')
+      .update(verificationcode)
+      .digest('hex');
+    return { verificationcode, hashedVerificationCode };
+  }
+
   toJSON(): User {
     return { ...this, password: undefined, verified: undefined };
   }
 }
-
-// export { RoleEnumType };
-// export { User };

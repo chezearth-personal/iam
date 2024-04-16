@@ -16,12 +16,12 @@ const smtp = config.get<{
 export { Email };
 
 class Email {
-  firstName: string;
+  firstname: string;
   to: string;
   from: string;
   /** ? Constructor */
   constructor(public user: User, public url: string) {
-    this.firstName = user.firstName;
+    this.firstname = user.firstname;
     this.to = user.email;
     this.from = `Admin ${config.get<string>('emailFrom')}`;
   }
@@ -45,7 +45,7 @@ class Email {
   private async send(template: string, subject: string) {
     /** Generate HTML template based on the template string */
     const html = pug.renderFile(`${__dirname}/../views/${template}.pug`, {
-      firstName: this.firstName,
+      firstname: this.firstname,
       subject,
       url: this.url,
     });
@@ -64,7 +64,7 @@ class Email {
 
   /** ? Method to send emails */
   async sendVerificationCode() {
-    await this.send('verificationCode', 'Your account verification code');
+    await this.send('verificationcode', 'Your account verification code');
   }
   async sendPasswordResetToken() {
     await this.send(
