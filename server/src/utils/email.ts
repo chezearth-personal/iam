@@ -25,8 +25,8 @@ class Email {
     this.firstname = user.firstname;
     this.to = user.email;
     this.from = `Admin ${config.get<string>('emailFrom')}`;
-    logger.log('DEBUG', `this.firstname = ${this.firstname}`);
-    logger.log('DEBUG', `this.to = ${this.to}`);
+    // logger.log('DEBUG', `this.firstname = ${this.firstname}`);
+    // logger.log('DEBUG', `this.to = ${this.to}`);
     logger.log('DEBUG', `this.from = ${this.from}`);
   }
 
@@ -56,7 +56,6 @@ class Email {
       subject,
       url: this.url,
     });
-    // logger.log('DEBUG', `html = ${html}`);
     /** Create email options */
     const mailOptions = {
       from: this.from,
