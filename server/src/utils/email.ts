@@ -22,7 +22,6 @@ export class Email {
     this.firstname = user.firstname;
     this.to = user.email;
     this.from = `Admin ${config.get<string>('emailFrom')}`;
-    // logger.log('DEBUG', `this.from = ${this.from}`);
   }
 
   private newTransport() {
@@ -56,7 +55,7 @@ export class Email {
       text: convert(html),
       html
     };
-    // logger.log('DEBUG', `mailOptions = ${JSON.stringify(mailOptions)}`);
+    // logger.log('DEBUG', `verification url = ${this.url}`);
     /** Send email */
     const info = await this.newTransport().sendMail(mailOptions);
     logger.log('DEBUG', nodemailer.getTestMessageUrl(info));

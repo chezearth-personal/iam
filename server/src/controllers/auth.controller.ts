@@ -63,7 +63,7 @@ export const registerUserHandler = async (
     /** Send verification email */
     const redirectUrl = `${config.get<string>(
       'origin'
-    )}/verifyemail/${verificationcode}`;
+    )}/api/auth/verifyemail/${verificationcode}`;
     try {
       await new Email(newUser, redirectUrl).sendVerificationCode();
       res.status(201).json({

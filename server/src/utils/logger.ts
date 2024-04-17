@@ -22,8 +22,8 @@ const levels = {
     ERROR: 'bold italic red',
     WARN: 'bold yellow',
     INFO: 'cyan',
-    HTTP: 'magenta',
-    DEBUG: 'blue',
+    HTTP: 'blue',
+    DEBUG: 'black',
     TRACE: 'green'
   }
 }
@@ -35,7 +35,9 @@ const enumerateErrorFormat = format((info) => {
   return info;
 });
 
-const logger = createLogger({
+Winston.addColors(levels.colors);
+
+export const logger = createLogger({
   levels: levels.levels,
   level: process.env.NODE_ENV === 'development' ? 'TRACE' : 'HTTP',
   format: format.combine(
@@ -52,15 +54,13 @@ const logger = createLogger({
   transports: [ new transports.Console() ]
 });
 
-Winston.addColors(levels.colors);
-
-const successHandler = morgan(successResponseFormat, {
+export const successHandler = morgan(successResponseFormat, {
   skip: (req, res) => res.statusCode >= 400,
   stream: { write: (message) => logger.log('HTTP', message.trim()) }
 })
-const errorHandler = morgan(errorResponseFormat, {
+export const errorHandler = morgan(errorResponseFormat, {
   skip: (req, res) => res.statusCode < 400,
   stream: { write: (message) => logger.log('ERROR', message.trim()) }
 });
 
-export { logger, successHandler, errorHandler };
+// export { logger, successHandler, errorHandler };

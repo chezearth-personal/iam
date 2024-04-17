@@ -4,7 +4,7 @@
    "description": "Identity Access Management",
    "main": "index.js",
    "scripts": {
-      "start": "ts-node-dev --respawn --transpile-only --exit-child src/app.ts",
+      "start": "ts-node-dev --respawn --debug --rs --transpile-only --exit-child src/app.ts",
       "build": "tsc -p .",
       "typeorm": "typeorm-ts-node-commonjs",
       "migrate": "rm -rf build && yarn build && yarn typeorm migration:generate -d ./src/utils/data-source.ts ./src/migrations/added-user-entity",

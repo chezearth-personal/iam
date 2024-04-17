@@ -3,7 +3,6 @@ import express, { NextFunction, Request, Response } from 'express';
 import config from 'config';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-// import nodemailer from 'nodemailer';
 import { AppDataSource } from './utils/data-source';
 import { AppError } from './utils/appError';
 import { Router as AuthRouter } from './routes/auth.routes';
@@ -11,11 +10,6 @@ import { Router as UserRouter } from './routes/user.routes';
 import { errorHandler, logger, successHandler } from './utils/logger';
 import { redisClient } from './utils/connectRedis';
 import { validateEnv } from './utils/validateEnv';
-
-// (async function() {
-  // const credentials = await nodemailer.createTestAccount();
-  // logger.log('TRACE', credentials)
-// })();
 
 AppDataSource.initialize()
   .then(async () => {
