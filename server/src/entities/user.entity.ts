@@ -1,17 +1,15 @@
 import crypto from 'crypto';
 import { Entity, Column, Index, BeforeInsert } from 'typeorm';
 import { compare, hash } from 'bcryptjs';
-import { Model } from './'
+import { Model } from './model.entity'
 
-export { RoleEnumType, User };
-
-enum RoleEnumType {
+export enum RoleEnumType {
   USER = 'user',
   ADMIN = 'admin'
 }
 
 @Entity('users')
-class User extends Model {
+export class User extends Model {
 
   @Column()
   firstname: string;

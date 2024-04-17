@@ -21,7 +21,7 @@ import {
   signJwt,
   verifyJwt
 } from '../utils';
-import { User } from '../entities';
+import { User } from '../entities/user.entity';
 
 const cookieOptions: CookieOptions = {
   httpOnly: true,
@@ -128,19 +128,27 @@ export const loginUserHandler = async (
     const { email, password } = req.body;
     const user = await findUserByEmail({ email });
     /** 1. Check if user exists and password is valid */
-    if (!user || !(await User.comparePasswords(password, user.password))) {
+    if (!user) {
       return next(new AppError(400, 'Invalid email or password'));
     }
-    /** 2. Sign access or refresh tokens */
+    /** 2. Check if user has verified their email */
+    if (!user.verified) {
+      return next(new AppError(400, 'Please verify your email address before logging in'));
+    }
+    /** 3. Check if the password is valid */
+    if (!(await User.comparePasswords(password, user.password))) {
+      return next(new AppError(400, 'Invalid email or password'));
+    }
+    /** 4. Sign access or refresh tokens */
     const { access_token, refresh_token } = await signTokens(user);
-    /** 3. Add cookies */
+    /** 5. Add cookies */
     res.cookie('access_token', access_token, accessTokenCookieOptions);
     res.cookie('refresh_token', refresh_token, refreshTokenCookieOptions);
     res.cookie('logged_in', true, {
       ...accessTokenCookieOptions,
       httpOnly: false
     });
-    /** 4. Send response */
+    /** 6. Send response */
     res.status(200).json({
       status: 'success',
       access_token,

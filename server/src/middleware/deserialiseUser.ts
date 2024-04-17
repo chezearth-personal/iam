@@ -2,13 +2,11 @@ import { NextFunction, Request, Response } from 'express';
 import { findUserById } from '../services';
 import { AppError, redisClient, verifyJwt } from '../utils';
 
-export { deserialiseUser };
-
-async function deserialiseUser(
+export const deserialiseUser = async (
   req: Request,
   res: Response,
   next: NextFunction
-) {
+) => {
   try {
     let access_token;
     if (
@@ -43,7 +41,7 @@ async function deserialiseUser(
     /** Add use to res.locals */
     res.locals.user = user;
     next();
-  } catch (error) {
+  } catch (error: any) {
     next(error);
   }
-}
+};

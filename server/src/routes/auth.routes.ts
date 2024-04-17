@@ -6,7 +6,9 @@ import {
   registerUserHandler,
   verifyEmailHandler
 } from '../controllers/auth.controller';
-import { deserialiseUser, requireUser, validate } from '../middleware';
+import { deserialiseUser } from '../middleware/deserialiseUser';
+import { requireUser } from '../middleware/requireUser';
+import { validate } from '../middleware/validate';
 import {
   createUserSchema,
   loginUserSchema,
