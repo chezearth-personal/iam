@@ -38,11 +38,11 @@ AppDataSource.initialize()
     );
 
     /** ROUTES */
-    app.use('/api/auth/', AuthRouter);
-    app.use('/api/users/', UserRouter);
+    app.use('/api/v1/auth/', AuthRouter);
+    app.use('/api/v1/users/', UserRouter);
 
     /** HEALTH CHECK */
-    app.get('/api/health-check', async (_, res: Response) => {
+    app.get('/api/v1/health-check', async (_, res: Response) => {
       const message = await redisClient.get('try');
       res.status(200).json({
         status: 'success',
