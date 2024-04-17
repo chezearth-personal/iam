@@ -2,10 +2,10 @@ import nodemailer from 'nodemailer';
 import config from 'config';
 import pug from 'pug';
 import { convert } from 'html-to-text';
-import { User } from '../entities';
-import { logger } from '../utils';
-import {log} from 'console';
+import { User } from 'entities/user.entity';
+import { logger } from './logger';
 
+/** ? SMTP configurations */
 const smtp = config.get<{
   host: string;
   port: number;
@@ -13,10 +13,7 @@ const smtp = config.get<{
   pass: string;
 }>('smtp');
 
-/** ? SMTP configurations */
-export { Email };
-
-class Email {
+export class Email {
   firstname: string;
   to: string;
   from: string;
@@ -25,9 +22,7 @@ class Email {
     this.firstname = user.firstname;
     this.to = user.email;
     this.from = `Admin ${config.get<string>('emailFrom')}`;
-    // logger.log('DEBUG', `this.firstname = ${this.firstname}`);
-    // logger.log('DEBUG', `this.to = ${this.to}`);
-    logger.log('DEBUG', `this.from = ${this.from}`);
+    // logger.log('DEBUG', `this.from = ${this.from}`);
   }
 
   private newTransport() {
@@ -48,9 +43,6 @@ class Email {
 
   private async send(template: string, subject: string) {
     /** Generate HTML template based on the template string */
-    // logger.log('DEBUG', `template = ${template}, subject = ${subject}`);
-    // logger.log('DEBUG', `pug file = ${__dirname}/../views/${template}.pug`);
-    // const compiledFunction = pug.compileFile(`${__dirname}/../views/${template}.pug`);
     const html = pug.renderFile(`${__dirname}/../views/${template}.pug`, {
       firstname: this.firstname,
       subject,

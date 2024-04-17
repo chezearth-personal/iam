@@ -1,32 +1,32 @@
 import config from 'config';
-import { User } from 'entities';
-import { CreateUserInput } from 'schema/user.schema';
-import { redisClient, AppDataSource, signJwt } from '../utils';
+import { User } from '../entities/user.entity';
+import { CreateUserInput } from '../schema/user.schema';
+import { redisClient } from '../utils/connectRedis';
+import { AppDataSource } from '../utils/data-source';
+import { signJwt } from '../utils/jwt';
 
 const userRepository = AppDataSource.getRepository(User);
 
-export { createUser, findUserByEmail, findUserById, findUser, signTokens };
-
-async function createUser(input: CreateUserInput) {
+export const createUser = async (input: CreateUserInput) => {
   return (await AppDataSource.manager.save(
     AppDataSource.manager.create(User, input)
   )) as User;
-}
+};
 
-async function findUserByEmail({ email }: { email: string }) {
+export const findUserByEmail = async ({ email }: { email: string }) => {
   return await userRepository.findOneBy({ email });
-}
+};
 
-async function findUserById(userId: string) {
+export const findUserById = async (userId: string) => {
   return await userRepository.findOneBy({ id: userId });
 }
 
-async function findUser(query: Object) {
+export const findUser = async (query: Object) => {
   return await userRepository.findOneBy(query);
 }
 
 /** ? Sign access and refresh tokens */
-async function signTokens(user: User) {
+export const signTokens = async (user: User) => {
   /** 1. Create session */
   redisClient.set(user.id, JSON.stringify(user), {
     EX: config.get<number>('redisCacheExpiresIn') * 60

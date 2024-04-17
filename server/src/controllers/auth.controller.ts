@@ -12,15 +12,12 @@ import {
   findUserByEmail,
   findUserById,
   signTokens
-} from '../services';
-import {
-  AppError,
-  Email,
-  logger,
-  redisClient,
-  signJwt,
-  verifyJwt
-} from '../utils';
+} from '../services/user.service';
+import { AppError } from '../utils/appError';
+import { Email } from '../utils/email';
+import { logger } from '../utils/logger';
+import { redisClient } from '../utils/connectRedis';
+import { signJwt, verifyJwt } from '../utils/jwt';
 import { User } from '../entities/user.entity';
 
 const cookieOptions: CookieOptions = {

@@ -1,14 +1,12 @@
 import jwt, { SignOptions } from 'jsonwebtoken';
 import config from 'config';
 
-export { signJwt, verifyJwt };
-
 /** ? Sign Access or Refresh Tokens */
-function signJwt(
+export const signJwt = (
   payload: Object,
   keyName: 'accessTokenPrivateKey' | 'refreshTokenPrivateKey',
   options: SignOptions
-) {
+) => {
   const privateKey = Buffer.from(
     config.get<string>(keyName),
     'base64'
@@ -20,10 +18,10 @@ function signJwt(
   return signedJwt;
 }
 
-function verifyJwt <T>(
+export const verifyJwt = <T>(
   token: string,
   keyName: 'accessTokenPublicKey' | 'refreshTokenPublicKey'
-): T | null {
+): T | null => {
   try {
     const publicKey = Buffer.from(
       config.get<string>(keyName),

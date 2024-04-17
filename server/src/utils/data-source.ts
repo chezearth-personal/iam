@@ -11,7 +11,7 @@ const postgresConfig = config.get<{
   database: string;
 }>('postgresConfig');
 
-const AppDataSource = new DataSource({
+export const AppDataSource = new DataSource({
   ...postgresConfig,
   type: 'postgres',
   synchronize: false,
@@ -20,5 +20,3 @@ const AppDataSource = new DataSource({
   migrations: ['src/migrations/**/*{.ts,.js}'],
   subscribers: ['src/subscribers/**/*{.ts,.js}']
 });
-
-export { AppDataSource };
