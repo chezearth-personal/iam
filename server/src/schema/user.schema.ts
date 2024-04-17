@@ -1,7 +1,7 @@
 import { object, string, TypeOf, z } from 'zod';
 import { RoleEnumType } from '../entities';
 
-const createUserSchema = object({
+export const createUserSchema = object({
   body: object({
     firstname: string({ required_error: 'First name is required' }),
     lastname: string({ required_error: 'Last name is required' }),
@@ -18,7 +18,7 @@ const createUserSchema = object({
   })
 });
 
-const loginUserSchema = object({
+export const loginUserSchema = object({
   body: object({
     email: string({ required_error: 'Email address is required' })
       .email('Invalid email address'),
@@ -27,11 +27,17 @@ const loginUserSchema = object({
   })
 });
 
-type CreateUserInput = Omit<
+export const verifyEmailSchema = object({
+  params: object({
+    verificationcode: string()
+  })
+});
+
+export type CreateUserInput = Omit<
   TypeOf<typeof createUserSchema>['body'],
   'passwordConfirm'
 >;
 
-type LoginUserInput = TypeOf<typeof loginUserSchema>['body'];
+export type LoginUserInput = TypeOf<typeof loginUserSchema>['body'];
 
-export { createUserSchema, loginUserSchema, CreateUserInput, LoginUserInput };
+export type VerifyEmailInput = TypeOf<typeof verifyEmailSchema>['params'];

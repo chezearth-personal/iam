@@ -1,6 +1,6 @@
 import config from 'config';
-import { User } from '../entities';
-import { CreateUserInput } from 'schema';
+import { User } from 'entities';
+import { CreateUserInput } from 'schema/user.schema';
 import { redisClient, AppDataSource, signJwt } from '../utils';
 
 const userRepository = AppDataSource.getRepository(User);

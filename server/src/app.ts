@@ -13,7 +13,8 @@ import {
   successHandler,
   validateEnv
 } from './utils';
-import { AuthRouter, UserRouter } from './routes';
+import { Router as AuthRouter } from './routes/auth.routes';
+import { Router as UserRouter } from './routes/user.routes';
 
 // (async function() {
   // const credentials = await nodemailer.createTestAccount();

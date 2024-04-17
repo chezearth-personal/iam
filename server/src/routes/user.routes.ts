@@ -1,10 +1,8 @@
 import express from 'express';
-import { getMeHandler } from '../controllers';
+import { getMeHandler } from '../controllers/user.controller';
 import { deserialiseUser, requireUser } from '../middleware';
 
-const UserRouter = express.Router();
-UserRouter.use(deserialiseUser, requireUser);
+export const Router = express.Router();
+Router.use(deserialiseUser, requireUser);
 /** Get currently logged in user */
-UserRouter.get('/me', getMeHandler);
-
-export { UserRouter };
+Router.get('/me', getMeHandler);

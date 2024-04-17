@@ -1,8 +1,14 @@
 import { CookieOptions, NextFunction, Request, Response } from 'express';
+import crypto from 'crypto';
 import config from 'config';
-import { CreateUserInput, LoginUserInput } from 'schema';
+import {
+  CreateUserInput,
+  LoginUserInput,
+  VerifyEmailInput
+} from '../schema/user.schema';
 import {
   createUser,
+  findUser,
   findUserByEmail,
   findUserById,
   signTokens
@@ -20,13 +26,6 @@ import { User } from '../entities';
 const cookieOptions: CookieOptions = {
   httpOnly: true,
   sameSite: 'lax'
-};
-
-export {
-  registerUserHandler,
-  loginUserHandler,
-  refreshAccessTokenHandler,
-  logoutHandler,
 };
 
 if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
@@ -47,11 +46,11 @@ const refreshTokenCookieOptions: CookieOptions = {
   maxAge: config.get<number>('refreshTokenExpiresIn') * 60 * 1000
 }
 
-async function registerUserHandler(
+export const registerUserHandler = async (
   req: Request<{}, {}, CreateUserInput>,
   res: Response,
   next: NextFunction
-) {
+) => {
   try {
     const { firstname, lastname, password, email } = req.body;
     const newUser = await createUser({
@@ -62,14 +61,12 @@ async function registerUserHandler(
     });
     const { hashedVerificationCode, verificationcode } = User.createVerificationCode();
     newUser.verificationcode = hashedVerificationCode;
-    // logger.log('DEBUG', JSON.stringify(newUser));
     await newUser.save();
 
     /** Send verification email */
     const redirectUrl = `${config.get<string>(
       'origin'
     )}/verifyemail/${verificationcode}`;
-    // logger.log('DEBUG', `redirectUrl = ${redirectUrl}`);
     try {
       await new Email(newUser, redirectUrl).sendVerificationCode();
       res.status(201).json({
@@ -94,13 +91,39 @@ async function registerUserHandler(
     }
     next(error);
   }
-}
+};
 
-async function loginUserHandler(
+export const verifyEmailHandler = async (
+  req: Request<VerifyEmailInput>,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const verificationcode = crypto
+      .createHash('sha256')
+      .update(req.params.verificationcode)
+      .digest('hex');
+    const user = await findUser({ verificationcode });
+    if (!user) {
+      return next(new AppError(401, 'Could not verify email'));
+    }
+    user.verified = true;
+    user.verificationcode = null;
+    await user.save();
+    res.status(200).json({
+      status: 'success',
+      message: 'Email verified successfully'
+    });
+  } catch (error: any) {
+    next(error);
+  }
+};
+
+export const loginUserHandler = async (
   req: Request<{}, {}, LoginUserInput>,
   res: Response,
   next: NextFunction
-) {
+) => {
   try {
     const { email, password } = req.body;
     const user = await findUserByEmail({ email });
@@ -122,17 +145,16 @@ async function loginUserHandler(
       status: 'success',
       access_token,
     });
-  } catch (error) {
+  } catch (error: any) {
     next(error);
   }
+};
 
-}
-
-async function refreshAccessTokenHandler(
+export const refreshAccessTokenHandler = async (
   req: Request,
   res: Response,
   next: NextFunction
-) {
+) => {
   try {
     const refresh_token = req.cookies.refresh_token;
     const message = 'Could not refresh access token';
@@ -171,10 +193,10 @@ async function refreshAccessTokenHandler(
       status: 'success',
       access_token
     });
-  } catch (error) {
+  } catch (error: any) {
     next(error);
   }
-}
+};
 
 const logout = (res: Response) => {
   res.cookie('access_token', '', { maxAge: -1 });
@@ -182,11 +204,11 @@ const logout = (res: Response) => {
   res.cookie('logged_in', '', { maxAge: -1 });
 }
 
-async function logoutHandler(
+export const logoutHandler = async (
   req: Request,
   res: Response,
   next: NextFunction
-) {
+) => {
   try {
     const user = res.locals.user;
     await redisClient.del(user.id);
@@ -194,7 +216,7 @@ async function logoutHandler(
     res.status(200).json({
       status: 'success'
     });
-  } catch (error) {
+  } catch (error: any) {
     next(error);
   }
-}
+};

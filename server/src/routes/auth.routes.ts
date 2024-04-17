@@ -3,19 +3,27 @@ import {
   loginUserHandler,
   logoutHandler,
   refreshAccessTokenHandler,
-  registerUserHandler
-} from '../controllers';
+  registerUserHandler,
+  verifyEmailHandler
+} from '../controllers/auth.controller';
 import { deserialiseUser, requireUser, validate } from '../middleware';
-import { createUserSchema, loginUserSchema } from '../schema';
+import {
+  createUserSchema,
+  loginUserSchema,
+  verifyEmailSchema
+} from '../schema/user.schema';
 
-const AuthRouter = express.Router();
+export const Router = express.Router();
 /** Reggister user */
-AuthRouter.post('/register', validate(createUserSchema), registerUserHandler);
+Router.post('/register', validate(createUserSchema), registerUserHandler);
+/** Verify email */
+Router.get(
+  '/verifyemail/:verificationcode',
+  validate(verifyEmailSchema), verifyEmailHandler
+);
 /** Login user */
-AuthRouter.post('/login', validate(loginUserSchema), loginUserHandler);
+Router.post('/login', validate(loginUserSchema), loginUserHandler);
 /** Logout user */
-AuthRouter.post('/logout', deserialiseUser, requireUser, logoutHandler);
+Router.post('/logout', deserialiseUser, requireUser, logoutHandler);
 /** Refresh access token */
-AuthRouter.get('/refresh', refreshAccessTokenHandler);
-
-export { AuthRouter };
+Router.get('/refresh', refreshAccessTokenHandler);
