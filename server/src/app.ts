@@ -31,6 +31,7 @@ AppDataSource.initialize()
     app.use(cookieParser());
     /** 4. CORS */
     app.use(
+      // cors()
       cors({
         origin: config.get<string>('origin'),
         credentials: true

@@ -63,7 +63,7 @@ export const registerUserHandler = async (
     /** Send verification email */
     const redirectUrl = `${config.get<string>(
       'origin'
-    )}/api/auth/verifyemail/${verificationcode}`;
+    )}/verifyemail/${verificationcode}`;
     try {
       await new Email(newUser, redirectUrl).sendVerificationCode();
       res.status(201).json({
@@ -83,7 +83,7 @@ export const registerUserHandler = async (
     if (error.code === '23505') {
       return res.status(409).json({
         status: 'fail',
-        message: 'User with that email already exists'
+        message: 'A user with that email already exists'
       });
     }
     next(error);
