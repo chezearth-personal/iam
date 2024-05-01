@@ -3,6 +3,7 @@ import crypto from 'crypto';
 import config from 'config';
 import {
   CreateUserInput,
+  ForgotPasswordInput,
   LoginUserInput,
   VerifyEmailInput
 } from '../schema/user.schema';
@@ -22,7 +23,8 @@ import { User } from '../entities/user.entity';
 
 const cookieOptions: CookieOptions = {
   httpOnly: true,
-  sameSite: 'lax'
+  sameSite: process.env.NODE_ENV === 'development' ? 'lax' : 'strict',
+  secure: process.env.NODE_ENV === 'development' ? false : true,
 };
 
 if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
@@ -33,6 +35,30 @@ const accessTokenCookieOptions: CookieOptions = {
     Date.now() + config.get<number>('accessTokenExpiresIn') * 60 * 1000
   ),
   maxAge: config.get<number>('accessTokenExpiresIn') * 60 * 1000
+}
+
+export const forgotPasswordHandler = async (
+  req: Request<{}, {}, ForgotPasswordInput>,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { email } = req.body;
+    const user = await findUserByEmail({ email });
+    if (!user) {
+      return next(new AppError(404, 'User not found'));
+    }
+    const { hashedVerificationCode, verificationcode } = User.createVerificationCode();
+    user.verificationcode = hashedVerificationCode;
+    await user.save();
+    /** Send verification email */
+    const redirectUrl = `${config.get<string>(
+      'origin'
+    )}/confirmemail/${verificationcode}`;
+    await new Email(user, redirectUrl).sendPasswordResetToken();
+  } catch (error: any) {
+    next(error);
+  }
 }
 
 const refreshTokenCookieOptions: CookieOptions = {
