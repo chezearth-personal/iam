@@ -2,7 +2,7 @@ import express from 'express';
 import {
   loginUserHandler,
   logoutHandler,
-  forgotPasswordHandler,
+  confirmEmailHandler,
   refreshAccessTokenHandler,
   registerUserHandler,
   verifyEmailHandler
@@ -25,7 +25,7 @@ Router.get(
   validate(verifyEmailSchema), verifyEmailHandler
 );
 /** Forgot password */
-Router.post('/forgot-password', forgotPasswordHandler);
+Router.post('/confirmemail', confirmEmailHandler);
 /** Login user */
 Router.post('/login', validate(loginUserSchema), loginUserHandler);
 /** Logout user */

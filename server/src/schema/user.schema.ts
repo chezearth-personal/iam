@@ -18,7 +18,7 @@ export const createUserSchema = object({
   })
 });
 
-export const forgotPasswordSchema = object({
+export const confirmEmailSchema = object({
   body: object({
     email: string({ required_error: 'Email address is required' })
       .email('Invalid email address')
@@ -45,7 +45,7 @@ export type CreateUserInput = Omit<
   'passwordConfirm'
 >;
 
-export type ForgotPasswordInput = TypeOf<typeof forgotPasswordSchema>['body'];
+export type ConfirmEmailInput = TypeOf<typeof confirmEmailSchema>['body'];
 
 export type LoginUserInput = TypeOf<typeof loginUserSchema>['body'];
 

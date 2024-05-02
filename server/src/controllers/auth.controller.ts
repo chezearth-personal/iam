@@ -3,7 +3,7 @@ import crypto from 'crypto';
 import config from 'config';
 import {
   CreateUserInput,
-  ForgotPasswordInput,
+  ConfirmEmailInput,
   LoginUserInput,
   VerifyEmailInput
 } from '../schema/user.schema';
@@ -37,8 +37,8 @@ const accessTokenCookieOptions: CookieOptions = {
   maxAge: config.get<number>('accessTokenExpiresIn') * 60 * 1000
 }
 
-export const forgotPasswordHandler = async (
-  req: Request<{}, {}, ForgotPasswordInput>,
+export const confirmEmailHandler = async (
+  req: Request<{}, {}, ConfirmEmailInput>,
   res: Response,
   next: NextFunction
 ) => {
