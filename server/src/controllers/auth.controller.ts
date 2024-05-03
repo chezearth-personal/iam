@@ -3,7 +3,7 @@ import crypto from 'crypto';
 import config from 'config';
 import {
   CreateUserInput,
-  ConfirmEmailInput,
+  ForgotPasswordInput,
   LoginUserInput,
   VerifyEmailInput
 } from '../schema/user.schema';
@@ -37,8 +37,8 @@ const accessTokenCookieOptions: CookieOptions = {
   maxAge: config.get<number>('accessTokenExpiresIn') * 60 * 1000
 }
 
-export const confirmEmailHandler = async (
-  req: Request<{}, {}, ConfirmEmailInput>,
+export const forgotPasswordHandler = async (
+  req: Request<{}, {}, ForgotPasswordInput>,
   res: Response,
   next: NextFunction
 ) => {
@@ -50,12 +50,26 @@ export const confirmEmailHandler = async (
     }
     const { hashedVerificationCode, verificationcode } = User.createVerificationCode();
     user.verificationcode = hashedVerificationCode;
+    user.verified = false;
     await user.save();
-    /** Send verification email */
+    /** Send confirmation email */
     const redirectUrl = `${config.get<string>(
       'origin'
-    )}/confirmemail/${verificationcode}`;
-    await new Email(user, redirectUrl).sendPasswordResetToken();
+    )}/confirm-email/${verificationcode}`;
+    try {
+      await new Email(user, redirectUrl).sendPasswordResetToken();
+      res.status(201).json({
+        status: 'success',
+        message: 'Check your email for a confirmation code that has been sent to update your passowrd'
+      });
+    } catch (error) {
+      user.verificationcode = null
+      await user.save();
+      return res.status(509).json({
+        status: 'error',
+        message: 'There was an error sending the email, please try again.'
+      })
+    }
   } catch (error: any) {
     next(error);
   }
@@ -89,7 +103,7 @@ export const registerUserHandler = async (
     /** Send verification email */
     const redirectUrl = `${config.get<string>(
       'origin'
-    )}/verifyemail/${verificationcode}`;
+    )}/verify-email/${verificationcode}`;
     try {
       await new Email(newUser, redirectUrl).sendVerificationCode();
       res.status(201).json({
@@ -141,6 +155,34 @@ export const verifyEmailHandler = async (
     next(error);
   }
 };
+
+export const confirmEmailHandler = async (
+  req: Request<VerifyEmailInput>,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { password } = req.body;
+    const verificationcode = crypto
+      .createHash('sha256')
+      .update(req.params.verificationcode)
+      .digest('hex');
+    const user = await findUser({ verificationcode });
+    if (!user) {
+      return next(new AppError(401, 'Could not confirm email'));
+    }
+    user.verified = true;
+    user.verificationcode = null;
+    user.password = password;
+    await user.save();
+    res.status(200).json({
+      status: 'success',
+      message: 'Password updated successfully'
+    });
+  } catch (error: any) {
+    next(error);
+  } 
+}
 
 export const loginUserHandler = async (
   req: Request<{}, {}, LoginUserInput>,

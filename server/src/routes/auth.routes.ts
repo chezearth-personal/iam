@@ -2,6 +2,7 @@ import express from 'express';
 import {
   loginUserHandler,
   logoutHandler,
+  forgotPasswordHandler,
   confirmEmailHandler,
   refreshAccessTokenHandler,
   registerUserHandler,
@@ -19,13 +20,20 @@ import {
 export const Router = express.Router();
 /** Reggister user */
 Router.post('/register', validate(createUserSchema), registerUserHandler);
-/** Verify email */
+/** Verify email (after registering, and sending a verification email) */
 Router.get(
   '/verifyemail/:verificationcode',
-  validate(verifyEmailSchema), verifyEmailHandler
+  validate(verifyEmailSchema),
+  verifyEmailHandler
+);
+/** Confirm email (after forgot password and sending a confirmation email) */
+Router.post(
+  '/confirmemail/:verificationcode',
+  validate(verifyEmailSchema),
+  confirmEmailHandler
 );
 /** Forgot password */
-Router.post('/confirmemail', confirmEmailHandler);
+Router.post('/forgot-password', forgotPasswordHandler);
 /** Login user */
 Router.post('/login', validate(loginUserSchema), loginUserHandler);
 /** Logout user */
