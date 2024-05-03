@@ -22,7 +22,7 @@ export const Router = express.Router();
 Router.post('/register', validate(createUserSchema), registerUserHandler);
 /** Verify email (after registering, and sending a verification email) */
 Router.get(
-  '/verifyemail/:verificationcode',
+  '/verify-email/:verificationcode',
   validate(verifyEmailSchema),
   verifyEmailHandler
 );
