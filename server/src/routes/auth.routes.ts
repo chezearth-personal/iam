@@ -28,7 +28,7 @@ Router.get(
 );
 /** Confirm email (after forgot password and sending a confirmation email) */
 Router.post(
-  '/confirmemail/:verificationcode',
+  '/confirm-email/:verificationcode',
   validate(verifyEmailSchema),
   confirmEmailHandler
 );
