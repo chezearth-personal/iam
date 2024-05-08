@@ -4,7 +4,7 @@ import config from 'config';
 import {
   CreateUserInput,
   ForgotPasswordInput,
-  PasswordResetInput,
+  ResetPasswordInput,
   LoginUserInput,
   VerifyEmailInput
 } from '../schema/user.schema';
@@ -68,7 +68,9 @@ export const registerUserHandler = async (
     /** Send verification email */
     const redirectUrl = `${config.get<string>(
       'origin'
-    )}/verify-email/${verificationcode}`;
+    )}/${config.get<string>(
+      'verifyEmailPath'
+    )}/${verificationcode}`;
     try {
       await new Email(newUser, redirectUrl).sendVerificationCode();
       res.status(201).json({
@@ -139,12 +141,14 @@ export const forgotPasswordHandler = async (
     /** Send confirmation email */
     const redirectUrl = `${config.get<string>(
       'origin'
-    )}/confirm-email/${verificationcode}`;
+    )}/${config.get<string>(
+      'resetPasswordPath'
+    )}/${verificationcode}`;
     try {
       await new Email(user, redirectUrl).sendPasswordResetToken();
       res.status(201).json({
         status: 'success',
-        message: 'Check your email for a confirmation link that has been sent to update your password'
+        message: 'Check your email for a confirmation link to update your password'
       });
     } catch (error) {
       user.verificationcode = null
@@ -160,12 +164,12 @@ export const forgotPasswordHandler = async (
 }
 
 export const resetPasswordHandler = async (
-  req: Request<PasswordResetInput>,
+  req: Request<ResetPasswordInput>,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    logger.log('DEBUG', JSON.stringify(req.body));
+    logger.log('DEBUG', `request body = ${JSON.stringify(req.body)}`);
     const { password } = req.body;
     logger.log('DEBUG', `Password: ${password}`);
     const verificationcode = crypto

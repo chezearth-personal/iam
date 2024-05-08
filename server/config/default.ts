@@ -3,5 +3,8 @@ export default {
   accessTokenExpiresIn: 5,
   refreshTokenExpiresIn: 60,
   redisCacheExpiresIn: 60,
-  emailFrom: 'admin@rethman.net'
+  emailFrom: 'admin@rethman.net',
+  verifyEmailPath: 'account/verify-email',
+  resetPasswordExpiresIn: 10,
+  resetPasswordPath: 'account/reset-password'
 }

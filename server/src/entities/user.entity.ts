@@ -2,7 +2,6 @@ import crypto from 'crypto';
 import { Entity, Column, Index, BeforeInsert, BeforeUpdate } from 'typeorm';
 import { compare, hash } from 'bcryptjs';
 import { Model } from './model.entity'
-import logger from '../utils/logger';
 
 export enum RoleEnumType {
   USER = 'user',

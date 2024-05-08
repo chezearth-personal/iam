@@ -13,8 +13,9 @@ import { requireUser } from '../middleware/requireUser';
 import { validate } from '../middleware/validate';
 import {
   createUserSchema,
-  loginUserSchema,
-  verifyEmailSchema
+  verifyEmailSchema,
+  resetPasswordSchema,
+  loginUserSchema
 } from '../schema/user.schema';
 
 export const Router = express.Router();
@@ -28,8 +29,8 @@ Router.get(
 );
 /** Confirm email (after forgot password and sending a confirmation email) */
 Router.post(
-  '/confirm-email/:verificationcode',
-  validate(verifyEmailSchema),
+  '/reset-password/:verificationcode',
+  validate(resetPasswordSchema),
   resetPasswordHandler
 );
 /** Forgot password */

@@ -25,7 +25,7 @@ export const forgotPasswordSchema = object({
   })
 });
 
-export const PasswordResetSchema = object({
+export const resetPasswordSchema = object({
   params: object({
     verificationcode: string()
   }),
@@ -41,8 +41,8 @@ export const PasswordResetSchema = object({
 });
 
 export const updatePasswordSchema = object({
-  password: string({ required_error: 'Password is required' }),
-  verificationcode: z.optional(string()),
+  password: string(),
+  verificationcode: z.nullable(z.string()),
   verified: z.boolean()
 });
 
@@ -68,10 +68,10 @@ export type CreateUserInput = Omit<
 
 export type ForgotPasswordInput = TypeOf<typeof forgotPasswordSchema>['body'];
 
-export type PasswordResetInput = Omit<
-  TypeOf<typeof PasswordResetSchema>['body'],
+export type ResetPasswordInput = Omit<
+  TypeOf<typeof resetPasswordSchema>['body'],
   'passwordConfirm'
-> & TypeOf<typeof PasswordResetSchema>['params'];
+> & TypeOf<typeof resetPasswordSchema>['params'];
 
 export type UpdatePasswordInput = TypeOf<typeof updatePasswordSchema>;
 
