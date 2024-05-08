@@ -18,7 +18,22 @@ export const createUserSchema = object({
   })
 });
 
-export const forgotPasswordSchema = object({
+export const verifyEmailSchema = object({
+  params: object({
+    verificationcode: string()
+  })
+});
+
+export const loginUserSchema = object({
+  body: object({
+    email: string({ required_error: 'Email address is required' })
+      .email('Invalid email address'),
+    password: string({ required_error: 'Password is required' })
+      .min(8, 'Invalid email or password')
+  })
+});
+
+export const confirmEmailSchema = object({
   body: object({
     email: string({ required_error: 'Email address is required' })
       .email('Invalid email address')
@@ -46,27 +61,16 @@ export const updatePasswordSchema = object({
   verified: z.boolean()
 });
 
-export const loginUserSchema = object({
-  body: object({
-    email: string({ required_error: 'Email address is required' })
-      .email('Invalid email address'),
-    password: string({ required_error: 'Password is required' })
-      .min(8, 'Invalid email or password')
-  })
-});
-
-export const verifyEmailSchema = object({
-  params: object({
-    verificationcode: string()
-  })
-});
-
 export type CreateUserInput = Omit<
   TypeOf<typeof createUserSchema>['body'],
   'passwordConfirm'
 >;
 
-export type ForgotPasswordInput = TypeOf<typeof forgotPasswordSchema>['body'];
+export type VerifyEmailInput = TypeOf<typeof verifyEmailSchema>['params'];
+
+export type LoginUserInput = TypeOf<typeof loginUserSchema>['body'];
+
+export type ConfirmEmailInput = TypeOf<typeof confirmEmailSchema>['body'];
 
 export type ResetPasswordInput = Omit<
   TypeOf<typeof resetPasswordSchema>['body'],
@@ -74,7 +78,3 @@ export type ResetPasswordInput = Omit<
 > & TypeOf<typeof resetPasswordSchema>['params'];
 
 export type UpdatePasswordInput = TypeOf<typeof updatePasswordSchema>;
-
-export type LoginUserInput = TypeOf<typeof loginUserSchema>['body'];
-
-export type VerifyEmailInput = TypeOf<typeof verifyEmailSchema>['params'];

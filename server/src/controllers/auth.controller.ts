@@ -3,7 +3,7 @@ import crypto from 'crypto';
 import config from 'config';
 import {
   CreateUserInput,
-  ForgotPasswordInput,
+  ConfirmEmailInput,
   ResetPasswordInput,
   LoginUserInput,
   VerifyEmailInput
@@ -123,8 +123,47 @@ export const verifyEmailHandler = async (
   }
 };
 
-export const forgotPasswordHandler = async (
-  req: Request<{}, {}, ForgotPasswordInput>,
+export const loginUserHandler = async (
+  req: Request<{}, {}, LoginUserInput>,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { email, password } = req.body;
+    const user = await findUserByEmail({ email });
+    /** 1. Check if user exists and password is valid */
+    if (!user) {
+      return next(new AppError(400, 'Invalid email or password'));
+    }
+    /** 2. Check if user has verified their email */
+    if (!user.verified) {
+      return next(new AppError(400, 'Please verify your email address before logging in'));
+    }
+    /** 3. Check if the password is valid */
+    if (!(await User.comparePasswords(password, user.password))) {
+      return next(new AppError(400, 'Invalid email or password'));
+    }
+    /** 4. Sign access or refresh tokens */
+    const { access_token, refresh_token } = await signTokens(user);
+    /** 5. Add cookies */
+    res.cookie('access_token', access_token, accessTokenCookieOptions);
+    res.cookie('refresh_token', refresh_token, refreshTokenCookieOptions);
+    res.cookie('logged_in', true, {
+      ...accessTokenCookieOptions,
+      httpOnly: false
+    });
+    /** 6. Send response */
+    res.status(200).json({
+      status: 'success',
+      access_token,
+    });
+  } catch (error: any) {
+    next(error);
+  }
+};
+
+export const confirmEmailHandler = async (
+  req: Request<{}, {}, ConfirmEmailInput>,
   res: Response,
   next: NextFunction
 ) => {
@@ -182,8 +221,8 @@ export const resetPasswordHandler = async (
       return next(new AppError(401, 'Could not update password'));
     }
     logger.log('DEBUG', 'User found');
-    logger.log('DEBUG', `User: id = ${user.id}, email = ${user.email}, verified = ${user.verified}, verificationcode = ${user.verificationcode}, password = ${user.password}`);
-    logger.log('DEBUG', `New password: ${password}`);
+    // logger.log('DEBUG', `User: id = ${user.id}, email = ${user.email}, verified = ${user.verified}, verificationcode = ${user.verificationcode}, password = ${user.password}`);
+    // logger.log('DEBUG', `New password: ${password}`);
     /** 2. Update the user's password */
     await updateUserPassword(user, {
       password,
@@ -198,45 +237,6 @@ export const resetPasswordHandler = async (
     next(error);
   } 
 }
-
-export const loginUserHandler = async (
-  req: Request<{}, {}, LoginUserInput>,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const { email, password } = req.body;
-    const user = await findUserByEmail({ email });
-    /** 1. Check if user exists and password is valid */
-    if (!user) {
-      return next(new AppError(400, 'Invalid email or password'));
-    }
-    /** 2. Check if user has verified their email */
-    if (!user.verified) {
-      return next(new AppError(400, 'Please verify your email address before logging in'));
-    }
-    /** 3. Check if the password is valid */
-    if (!(await User.comparePasswords(password, user.password))) {
-      return next(new AppError(400, 'Invalid email or password'));
-    }
-    /** 4. Sign access or refresh tokens */
-    const { access_token, refresh_token } = await signTokens(user);
-    /** 5. Add cookies */
-    res.cookie('access_token', access_token, accessTokenCookieOptions);
-    res.cookie('refresh_token', refresh_token, refreshTokenCookieOptions);
-    res.cookie('logged_in', true, {
-      ...accessTokenCookieOptions,
-      httpOnly: false
-    });
-    /** 6. Send response */
-    res.status(200).json({
-      status: 'success',
-      access_token,
-    });
-  } catch (error: any) {
-    next(error);
-  }
-};
 
 export const refreshAccessTokenHandler = async (
   req: Request,

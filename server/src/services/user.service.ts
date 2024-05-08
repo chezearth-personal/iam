@@ -27,9 +27,7 @@ export const findUser = async (query: Object) => {
 }
 
 export const updateUserPassword = async (user: User, input: UpdatePasswordInput) => {
-  // logger.log('DEBUG', `Updating password for user with id: ${id}`);
   logger.log('DEBUG', `Input: ${JSON.stringify(input)}`);
-  // const oldUser: User = await userRepository.findOneBy({ id });
   logger.log('DEBUG', `Old user: ${JSON.stringify(user)}`);
   return await userRepository.save(Object.assign(user, input));
 }
@@ -51,6 +49,5 @@ export const signTokens = async (user: User) => {
     'refreshTokenPrivateKey',
     { expiresIn: `${config.get<number>('refreshTokenExpiresIn')}m` }
   );
-  
   return { access_token, refresh_token };
 }
