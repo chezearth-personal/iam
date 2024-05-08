@@ -28,7 +28,7 @@ Router.get(
   verifyEmailHandler
 );
 /** Confirm email (after forgot password and sending a confirmation email) */
-Router.post(
+Router.put(
   '/reset-password/:verificationcode',
   validate(resetPasswordSchema),
   resetPasswordHandler

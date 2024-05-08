@@ -185,7 +185,7 @@ export const resetPasswordHandler = async (
     logger.log('DEBUG', `User: id = ${user.id}, email = ${user.email}, verified = ${user.verified}, verificationcode = ${user.verificationcode}, password = ${user.password}`);
     logger.log('DEBUG', `New password: ${password}`);
     /** 2. Update the user's password */
-    await updateUserPassword(user.id, {
+    await updateUserPassword(user, {
       password,
       ...{ verified: true, verificationcode: null }
     });

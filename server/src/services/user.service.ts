@@ -26,13 +26,12 @@ export const findUser = async (query: Object) => {
   return await userRepository.findOneBy(query);
 }
 
-export const updateUserPassword = async (id: string, input: UpdatePasswordInput) => {
-  logger.log('DEBUG', `Updating password for user with id: ${id}`);
+export const updateUserPassword = async (user: User, input: UpdatePasswordInput) => {
+  // logger.log('DEBUG', `Updating password for user with id: ${id}`);
   logger.log('DEBUG', `Input: ${JSON.stringify(input)}`);
-  return await userRepository.update(
-    { id: id},
-    input
-  );
+  // const oldUser: User = await userRepository.findOneBy({ id });
+  logger.log('DEBUG', `Old user: ${JSON.stringify(user)}`);
+  return await userRepository.save(Object.assign(user, input));
 }
 
 /** ? Sign access and refresh tokens */
