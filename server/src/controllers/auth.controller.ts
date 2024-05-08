@@ -4,6 +4,7 @@ import config from 'config';
 import {
   CreateUserInput,
   ForgotPasswordInput,
+  PasswordResetInput,
   LoginUserInput,
   VerifyEmailInput
 } from '../schema/user.schema';
@@ -12,6 +13,7 @@ import {
   findUser,
   findUserByEmail,
   findUserById,
+  updateUserPassword,
   signTokens
 } from '../services/user.service';
 import { AppError } from '../utils/appError';
@@ -20,6 +22,7 @@ import { logger } from '../utils/logger';
 import { redisClient } from '../utils/connectRedis';
 import { signJwt, verifyJwt } from '../utils/jwt';
 import { User } from '../entities/user.entity';
+// import {log} from 'console';
 
 const cookieOptions: CookieOptions = {
   httpOnly: true,
@@ -35,44 +38,6 @@ const accessTokenCookieOptions: CookieOptions = {
     Date.now() + config.get<number>('accessTokenExpiresIn') * 60 * 1000
   ),
   maxAge: config.get<number>('accessTokenExpiresIn') * 60 * 1000
-}
-
-export const forgotPasswordHandler = async (
-  req: Request<{}, {}, ForgotPasswordInput>,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const { email } = req.body;
-    const user = await findUserByEmail({ email });
-    if (!user) {
-      return next(new AppError(404, 'User not found'));
-    }
-    const { hashedVerificationCode, verificationcode } = User.createVerificationCode();
-    user.verificationcode = hashedVerificationCode;
-    user.verified = false;
-    await user.save();
-    /** Send confirmation email */
-    const redirectUrl = `${config.get<string>(
-      'origin'
-    )}/confirm-email/${verificationcode}`;
-    try {
-      await new Email(user, redirectUrl).sendPasswordResetToken();
-      res.status(201).json({
-        status: 'success',
-        message: 'Check your email for a confirmation code that has been sent to update your passowrd'
-      });
-    } catch (error) {
-      user.verificationcode = null
-      await user.save();
-      return res.status(509).json({
-        status: 'error',
-        message: 'There was an error sending the email, please try again.'
-      })
-    }
-  } catch (error: any) {
-    next(error);
-  }
 }
 
 const refreshTokenCookieOptions: CookieOptions = {
@@ -156,25 +121,71 @@ export const verifyEmailHandler = async (
   }
 };
 
-export const confirmEmailHandler = async (
-  req: Request<VerifyEmailInput>,
+export const forgotPasswordHandler = async (
+  req: Request<{}, {}, ForgotPasswordInput>,
   res: Response,
   next: NextFunction
 ) => {
   try {
+    const { email } = req.body;
+    const user = await findUserByEmail({ email });
+    if (!user) {
+      return next(new AppError(404, 'User not found'));
+    }
+    const { hashedVerificationCode, verificationcode } = User.createVerificationCode();
+    user.verificationcode = hashedVerificationCode;
+    user.verified = false;
+    await user.save();
+    /** Send confirmation email */
+    const redirectUrl = `${config.get<string>(
+      'origin'
+    )}/confirm-email/${verificationcode}`;
+    try {
+      await new Email(user, redirectUrl).sendPasswordResetToken();
+      res.status(201).json({
+        status: 'success',
+        message: 'Check your email for a confirmation link that has been sent to update your password'
+      });
+    } catch (error) {
+      user.verificationcode = null
+      await user.save();
+      return res.status(509).json({
+        status: 'error',
+        message: 'There was an error sending the email, please try again.'
+      })
+    }
+  } catch (error: any) {
+    next(error);
+  }
+}
+
+export const resetPasswordHandler = async (
+  req: Request<PasswordResetInput>,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    logger.log('DEBUG', JSON.stringify(req.body));
     const { password } = req.body;
+    logger.log('DEBUG', `Password: ${password}`);
     const verificationcode = crypto
       .createHash('sha256')
       .update(req.params.verificationcode)
       .digest('hex');
+    /** 1. Find the user by querying on the verification code */
     const user = await findUser({ verificationcode });
     if (!user) {
-      return next(new AppError(401, 'Could not confirm email'));
+      return next(new AppError(401, 'Could not update password'));
     }
-    user.verified = true;
-    user.verificationcode = null;
-    user.password = password;
-    await user.save();
+    logger.log('DEBUG', 'User found');
+    logger.log('DEBUG', `User: id = ${user.id}, email = ${user.email}, verified = ${user.verified}, verificationcode = ${user.verificationcode}, password = ${user.password}`);
+    logger.log('DEBUG', `New password: ${password}`);
+    /** 2. Update the user's password */
+    await updateUserPassword(user.id, {
+      password,
+      ...{ verified: true, verificationcode: null }
+    });
+    /** 3. Send the reponse */
     res.status(200).json({
       status: 'success',
       message: 'Password updated successfully'

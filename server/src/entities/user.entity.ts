@@ -1,7 +1,8 @@
 import crypto from 'crypto';
-import { Entity, Column, Index, BeforeInsert } from 'typeorm';
+import { Entity, Column, Index, BeforeInsert, BeforeUpdate } from 'typeorm';
 import { compare, hash } from 'bcryptjs';
 import { Model } from './model.entity'
+import logger from '../utils/logger';
 
 export enum RoleEnumType {
   USER = 'user',
@@ -44,6 +45,12 @@ export class User extends Model {
   /** ? Hash password before saving to database */
   @BeforeInsert()
   async hashPassword() {
+    this.password = await hash(this.password, 12);
+  }
+
+  /** ? Hash password before updating it in database */
+  @BeforeUpdate()
+  async updateHashPassword() {
     this.password = await hash(this.password, 12);
   }
 

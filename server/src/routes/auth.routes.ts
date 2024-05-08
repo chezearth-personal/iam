@@ -3,7 +3,7 @@ import {
   loginUserHandler,
   logoutHandler,
   forgotPasswordHandler,
-  confirmEmailHandler,
+  resetPasswordHandler,
   refreshAccessTokenHandler,
   registerUserHandler,
   verifyEmailHandler
@@ -30,7 +30,7 @@ Router.get(
 Router.post(
   '/confirm-email/:verificationcode',
   validate(verifyEmailSchema),
-  confirmEmailHandler
+  resetPasswordHandler
 );
 /** Forgot password */
 Router.post('/forgot-password', forgotPasswordHandler);

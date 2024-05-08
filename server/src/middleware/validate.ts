@@ -5,9 +5,6 @@ import { AnyZodObject, ZodError } from 'zod';
 export const validate = (schema: AnyZodObject) => {
   return (req: Request, res: Response, next: NextFunction) => {
     try {
-      // logger.log('DEBUG', `Validating request: method = ${req.method}`);
-      // logger.log('DEBUG', `Validating request: originalUrl = ${req.originalUrl}`);
-      // logger.log('DEBUG', `Validating request: body = ${JSON.stringify(req.body)}`);
       schema.parse({
         params: req.params,
         query: req.query,
