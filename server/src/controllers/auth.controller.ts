@@ -22,7 +22,6 @@ import { logger } from '../utils/logger';
 import { redisClient } from '../utils/connectRedis';
 import { signJwt, verifyJwt } from '../utils/jwt';
 import { User } from '../entities/user.entity';
-// import {log} from 'console';
 
 const cookieOptions: CookieOptions = {
   httpOnly: true,
@@ -73,7 +72,7 @@ export const registerUserHandler = async (
     )}/${verificationcode}`;
     try {
       await new Email(newUser, redirectUrl).sendVerificationCode();
-      res.status(201).json({
+      res.status(202).json({
         status: 'success',
         message: 'An email with a verification code has been sent to your email address'
       });
@@ -171,21 +170,19 @@ export const confirmEmailHandler = async (
     const { email } = req.body;
     const user = await findUserByEmail({ email });
     if (!user) {
-      return next(new AppError(404, 'User not found'));
+      return next(new AppError(404, 'The user with that email cannot be found'));
     }
     const { hashedVerificationCode, verificationcode } = User.createVerificationCode();
     user.verificationcode = hashedVerificationCode;
     user.verified = false;
     await user.save();
     /** Send confirmation email */
-    const redirectUrl = `${config.get<string>(
-      'origin'
-    )}/${config.get<string>(
-      'resetPasswordPath'
-    )}/${verificationcode}`;
+    const redirectUrl = `${config
+      .get<string>('origin')}/${config
+      .get<string>('resetPasswordPath')}/${verificationcode}`;
     try {
       await new Email(user, redirectUrl).sendPasswordResetToken();
-      res.status(201).json({
+      res.status(202).json({
         status: 'success',
         message: 'Check your email for a confirmation link to update your password'
       });
@@ -208,9 +205,7 @@ export const resetPasswordHandler = async (
   next: NextFunction
 ) => {
   try {
-    logger.log('DEBUG', `request body = ${JSON.stringify(req.body)}`);
     const { password } = req.body;
-    logger.log('DEBUG', `Password: ${password}`);
     const verificationcode = crypto
       .createHash('sha256')
       .update(req.params.verificationcode)
@@ -220,16 +215,24 @@ export const resetPasswordHandler = async (
     if (!user) {
       return next(new AppError(401, 'Could not update password'));
     }
-    logger.log('DEBUG', 'User found');
-    // logger.log('DEBUG', `User: id = ${user.id}, email = ${user.email}, verified = ${user.verified}, verificationcode = ${user.verificationcode}, password = ${user.password}`);
-    // logger.log('DEBUG', `New password: ${password}`);
+    /** 2. Check to see that the time since the last change does not exceed the limit */
+    const now = Number(new Date());
+    // logger.log('DEBUG', `now = ${now}`);
+    const lastUpdated = user.updated_at && Number(new Date(user.updated_at));
+    logger.log('DEBUG', `user.updated_at = ${user.updated_at}`);
+    // logger.log('DEBUG', `lastUpdated = ${lastUpdated}`);
+    logger.log('DEBUG', `difference = ${now - lastUpdated}`);
+    logger.log('DEBUG', `limit = ${1000 * 60 * config.get<number>('resetPasswordExpiresIn')}`);
+    if (lastUpdated && now - lastUpdated > 1000 * 60 * config.get<number>('resetPasswordExpiresIn')) {
+      return next(new AppError(400, 'Password reset link has expired'));
+    }
     /** 2. Update the user's password */
     await updateUserPassword(user, {
       password,
       ...{ verified: true, verificationcode: null }
     });
     /** 3. Send the reponse */
-    res.status(200).json({
+    return res.status(200).json({
       status: 'success',
       message: 'Password updated successfully'
     });

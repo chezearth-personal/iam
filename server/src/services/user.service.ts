@@ -4,7 +4,7 @@ import { CreateUserInput, UpdatePasswordInput } from '../schema/user.schema';
 import { redisClient } from '../utils/connectRedis';
 import { AppDataSource } from '../utils/data-source';
 import { signJwt } from '../utils/jwt';
-import { logger } from '../utils/logger';
+// import { logger } from '../utils/logger';
 
 const userRepository = AppDataSource.getRepository(User);
 
@@ -27,8 +27,8 @@ export const findUser = async (query: Object) => {
 }
 
 export const updateUserPassword = async (user: User, input: UpdatePasswordInput) => {
-  logger.log('DEBUG', `Input: ${JSON.stringify(input)}`);
-  logger.log('DEBUG', `Old user: ${JSON.stringify(user)}`);
+  // logger.log('DEBUG', `Input: ${JSON.stringify(input)}`);
+  // logger.log('DEBUG', `Old user: ${JSON.stringify(user)}`);
   return await userRepository.save(Object.assign(user, input));
 }
 

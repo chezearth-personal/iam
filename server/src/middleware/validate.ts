@@ -14,10 +14,17 @@ export const validate = (schema: AnyZodObject) => {
     } catch (error) {
       logger.log('ERROR', `Validation failed: ${error}`);
       if (error instanceof ZodError) {
-        return res.status(400).json({
-          status: 'fail',
-          errors: error.errors
-        });
+        if (error.errors.length === 1) {
+          res.status(400).json({
+            status: 'fail',
+            message: error.errors[0].message
+          });
+        } else {
+          res.status(400).json({
+            status: 'fail',
+            errors: error.errors
+          });
+        }
       }
       next(error);
     }

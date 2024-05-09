@@ -5,6 +5,6 @@ export default {
   redisCacheExpiresIn: 60,
   emailFrom: 'admin@rethman.net',
   verifyEmailPath: 'account/verify-email',
-  resetPasswordExpiresIn: 10,
+  resetPasswordExpiresIn: 15,
   resetPasswordPath: 'account/reset-password'
 }

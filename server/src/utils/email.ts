@@ -4,6 +4,7 @@ import pug from 'pug';
 import { convert } from 'html-to-text';
 import { User } from 'entities/user.entity';
 import { logger } from './logger';
+// import {number} from 'zod';
 
 /** ? SMTP configurations */
 const smtp = config.get<{
@@ -24,6 +25,7 @@ export class Email {
     this.from = `Admin ${config.get<string>('emailFrom')}`;
   }
 
+  /** ? Transport */
   private newTransport() {
     // if (process.env.NODE_ENV === 'production') {
     //   logger.log('DEBUG', 'Hello');
@@ -37,8 +39,6 @@ export class Email {
       },
     });
   }
-
-  /** ? Transport */
 
   private async send(template: string, subject: string) {
     /** Generate HTML template based on the template string */
@@ -58,7 +58,7 @@ export class Email {
     // logger.log('DEBUG', `verification url = ${this.url}`);
     /** Send email */
     const info = await this.newTransport().sendMail(mailOptions);
-    logger.log('DEBUG', nodemailer.getTestMessageUrl(info));
+    // logger.log('DEBUG', nodemailer.getTestMessageUrl(info));
   }
 
   /** ? Method to send emails */
@@ -68,7 +68,9 @@ export class Email {
   async sendPasswordResetToken() {
     await this.send(
       'resetPassword',
-      'Your password reset token (valid for only 10 minutes)'
+      `Your password reset token (valid for only ${config
+        .get<number>('resetPasswordExpiresIn')} minute${config
+        .get<number>('resetPasswordExpiresIn') > 1 ? 's' : ''})`
     );
   }
 }
