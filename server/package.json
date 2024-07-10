@@ -1,5 +1,5 @@
 {
-  "name": "iam",
+  "name": "Identity Access and Management (IAM) server",
   "version": "1.0.0",
   "description": "Identity Access Management",
   "main": "index.js",
