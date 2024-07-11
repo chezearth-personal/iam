@@ -2,14 +2,14 @@
   "name": "iam-server",
   "version": "1.0.0",
   "description": "Identity Access Manager (IAM) server",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "start": "ts-node-dev --respawn --debug --rs --transpile-only --exit-child src/app.ts",
     "build": "tsc -p .",
     "typeorm": "typeorm-ts-node-commonjs",
     "migrate": "rm -rf build && yarn build && yarn typeorm migration:generate -d ./src/utils/data-source.ts ./src/migrations/added-user-entity",
     "db:push": "rm -rf build && yarn build && yarn typeorm migration:run -d src/utils/data-source.ts",
-    "serve": "tsc-watch --onSuccess \"nodemon dist/index.js\"",
+    "serve": "tsc-watch --onSuccess \"nodemon build/app.js\"",
     "test": "test"
   },
   "packageManager": "yarn@4.1.1",
