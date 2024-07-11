@@ -1,7 +1,7 @@
 {
-  "name": "Identity Access and Management (IAM) server",
+  "name": "IAM",
   "version": "1.0.0",
-  "description": "Identity Access Management",
+  "description": "Identity Access Management (IAM) server",
   "main": "index.js",
   "scripts": {
     "start": "ts-node-dev --respawn --debug --rs --transpile-only --exit-child src/app.ts",
@@ -16,10 +16,19 @@
   "keywords": [
     "identity",
     "access",
+    "manager",
+    "iam",
+    "IAM",
+    "authentication",
     "authorisation",
     "authorization",
     "users",
-    "user"
+    "user",
+    "register",
+    "email verification",
+    "login",
+    "password reset",
+    "logout"
   ],
   "author": "Charles W Rethman",
   "license": "MIT",
