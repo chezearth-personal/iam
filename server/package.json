@@ -1,7 +1,7 @@
 {
-  "name": "IAM",
+  "name": "iam-server",
   "version": "1.0.0",
-  "description": "Identity Access Management (IAM) server",
+  "description": "Identity Access Manager (IAM) server",
   "main": "index.js",
   "scripts": {
     "start": "ts-node-dev --respawn --debug --rs --transpile-only --exit-child src/app.ts",
