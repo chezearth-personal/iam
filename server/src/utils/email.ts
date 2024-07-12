@@ -20,6 +20,9 @@ export class Email {
   from: string;
   /** ? Constructor */
   constructor(public user: User, public url: string) {
+    // console.log('user =', user);
+    // console.log('url =', url);
+    // console.log('[from] =', `Admin ${config.get<string>('emailFrom')}`);
     this.firstname = user.firstname;
     this.to = user.email;
     this.from = `Admin ${config.get<string>('emailFrom')}`;
@@ -58,12 +61,12 @@ export class Email {
     // logger.log('DEBUG', `verification url = ${this.url}`);
     /** Send email */
     const info = await this.newTransport().sendMail(mailOptions);
-    // logger.log('DEBUG', nodemailer.getTestMessageUrl(info));
+    logger.log('DEBUG', nodemailer.getTestMessageUrl(info));
   }
 
   /** ? Method to send emails */
   async sendVerificationCode() {
-    await this.send('verificationcode', 'Your account verification code');
+    await this.send('verificationCode', 'Your account verification code');
   }
   async sendPasswordResetToken() {
     await this.send(

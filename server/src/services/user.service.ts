@@ -15,6 +15,8 @@ export const createUser = async (input: CreateUserInput) => {
 };
 
 export const findUserByEmail = async ({ email }: { email: string }) => {
+  console.log('email obj =', { email });
+  // console.log('userRepository =', userRepository);
   return await userRepository.findOneBy({ email });
 };
 

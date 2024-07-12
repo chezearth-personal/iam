@@ -34,6 +34,9 @@ export class User extends Model {
   @Column({ default: false })
   verified: boolean;
 
+  // @Column({ default: false })
+  // skip: boolean;
+
   @Index('verificationcode_index')
   @Column({
     type: 'text',
@@ -44,20 +47,31 @@ export class User extends Model {
   /** ? Hash password before saving to database */
   @BeforeInsert()
   async hashPassword() {
+    console.log('@BeforeInsert');
+    console.log('"this" =', this);
     this.password = await hash(this.password, 12);
   }
 
   /** ? Hash password before updating it in database */
-  @BeforeUpdate()
-  async updateHashPassword() {
-    this.password = await hash(this.password, 12);
-  }
+  // @BeforeUpdate()
+  // async updateHashPassword() {
+    // console.log('@BeforeUpdate');
+    // console.log('"this" =', this);
+    // if (this.skip) {
+      // this.skip = false;
+    // } {
+      // this.password = await hash(this.password, 12);
+    // }
+  // }
 
   /** ? Validate password */
   static async comparePasswords(
     candidatePassword: string,
     hashedPassword: string
   ) {
+    console.log('candidatePassword =', candidatePassword);
+    // console.log('hashed candidatePassword =', await hash(candidatePassword, 12));
+    console.log('hashedPassword =', hashedPassword);
     return await compare(candidatePassword, hashedPassword);
   }
 

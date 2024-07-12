@@ -10,11 +10,20 @@ import { Router as UserRouter } from './routes/user.routes';
 import { errorHandler, logger, successHandler } from './utils/logger';
 import { redisClient } from './utils/connectRedis';
 import { validateEnv } from './utils/validateEnv';
+/** Nodemailer is used for fake emails */
+// import nodemailer from 'nodemailer';
+
+/** IIF to call Ethereal and create a new fake email account */
+// (async function () {
+  // const credentials = await nodemailer.createTestAccount();
+  // console.log(credentials);
+// })();
 
 AppDataSource.initialize()
   .then(async () => {
     /** Validate env */
     validateEnv();
+    // console.log(process.env);
     const app = express();
 
     /** TEMPLATE ENGINE */

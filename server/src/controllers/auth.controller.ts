@@ -52,8 +52,10 @@ export const registerUserHandler = async (
   res: Response,
   next: NextFunction
 ) => {
+  // console.log('registerUserHandler() ...')
   try {
     const { firstname, lastname, password, email } = req.body;
+    console.log('user =', { email, password });
     const newUser = await createUser({
       firstname,
       lastname,
@@ -65,11 +67,13 @@ export const registerUserHandler = async (
     await newUser.save();
 
     /** Send verification email */
+    // console.log('Send verification email ...')
     const redirectUrl = `${config.get<string>(
       'origin'
     )}/${config.get<string>(
       'verifyEmailPath'
     )}/${verificationcode}`;
+    // console.log('redirectUrl =', redirectUrl);
     try {
       await new Email(newUser, redirectUrl).sendVerificationCode();
       res.status(202).json({
@@ -101,18 +105,26 @@ export const verifyEmailHandler = async (
   res: Response,
   next: NextFunction
 ) => {
+  console.log('verifyEmailHandler ...');
   try {
     const verificationcode = crypto
       .createHash('sha256')
       .update(req.params.verificationcode)
       .digest('hex');
+    console.log('verificationcode =', verificationcode);
     const user = await findUser({ verificationcode });
+    console.log('user =', user);
     if (!user) {
       return next(new AppError(401, 'Could not verify email'));
     }
+    const email = user.email;
     user.verified = true;
     user.verificationcode = null;
+    // user.skip = true;
     await user.save();
+    console.log('user =', user);
+    const modUser = await findUserByEmail({ email });
+    console.log('modUser =', modUser);
     res.status(200).json({
       status: 'success',
       message: 'Email verified successfully'
@@ -129,7 +141,9 @@ export const loginUserHandler = async (
 ) => {
   try {
     const { email, password } = req.body;
+    console.log('email, password =', { email }, email, password);
     const user = await findUserByEmail({ email });
+    console.log('user =', user);
     /** 1. Check if user exists and password is valid */
     if (!user) {
       return next(new AppError(400, 'Invalid email or password'));
@@ -138,6 +152,7 @@ export const loginUserHandler = async (
     if (!user.verified) {
       return next(new AppError(400, 'Please verify your email address before logging in'));
     }
+    console.log('Step 1 & 2 done. user exists and is verified')
     /** 3. Check if the password is valid */
     if (!(await User.comparePasswords(password, user.password))) {
       return next(new AppError(400, 'Invalid email or password'));
@@ -226,12 +241,12 @@ export const resetPasswordHandler = async (
     if (lastUpdated && now - lastUpdated > 1000 * 60 * config.get<number>('resetPasswordExpiresIn')) {
       return next(new AppError(400, 'Password reset link has expired'));
     }
-    /** 2. Update the user's password */
+    /** 3. Update the user's password */
     await updateUserPassword(user, {
       password,
       ...{ verified: true, verificationcode: null }
     });
-    /** 3. Send the reponse */
+    /** 4. Send the reponse */
     return res.status(200).json({
       status: 'success',
       message: 'Password updated successfully'

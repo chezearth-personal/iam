@@ -445,48 +445,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"IAM@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "IAM@workspace:."
-  dependencies:
-    "@types/bcryptjs": "npm:^2.4.6"
-    "@types/config": "npm:^3.3.4"
-    "@types/cookie-parser": "npm:^1.4.7"
-    "@types/cors": "npm:^2.8.17"
-    "@types/dotenv": "npm:^8.2.0"
-    "@types/express": "npm:^4.17.21"
-    "@types/html-to-text": "npm:^9.0.4"
-    "@types/jsonwebtoken": "npm:^9.0.6"
-    "@types/morgan": "npm:^1.9.9"
-    "@types/node": "npm:^16.11.10"
-    "@types/nodemailer": "npm:^6.4.14"
-    "@types/pug": "npm:^2.0.10"
-    "@types/winston": "npm:^2.4.4"
-    bcryptjs: "npm:^2.4.3"
-    body-parser: "npm:^1.19.1"
-    config: "npm:^3.3.11"
-    cookie-parser: "npm:^1.4.6"
-    cors: "npm:^2.8.5"
-    dotenv: "npm:^16.4.5"
-    envalid: "npm:^8.0.0"
-    express: "npm:^4.17.2"
-    html-to-text: "npm:^9.0.5"
-    jsonwebtoken: "npm:^9.0.2"
-    morgan: "npm:^1.10.0"
-    nodemailer: "npm:^6.9.13"
-    pg: "npm:^8.4.0"
-    pug: "npm:^3.0.2"
-    redis: "npm:^4.6.13"
-    reflect-metadata: "npm:^0.1.13"
-    ts-node: "npm:10.9.1"
-    ts-node-dev: "npm:^2.0.0"
-    typeorm: "npm:0.3.20"
-    typescript: "npm:4.5.2"
-    winston: "npm:^3.13.0"
-    zod: "npm:^3.22.4"
-  languageName: unknown
-  linkType: soft
-
 "abbrev@npm:^2.0.0":
   version: 2.0.0
   resolution: "abbrev@npm:2.0.0"
@@ -1669,6 +1627,48 @@ __metadata:
   checksum: 10c0/bc4f7c38da32a5fc622450b6cb49a24ff596f9bd48dcedb52d2da3fa1c1a80e100fb506bd59b326c012f21c863c69b275c23de1a01d0b84db396822fdf25e52b
   languageName: node
   linkType: hard
+
+"iam-server@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "iam-server@workspace:."
+  dependencies:
+    "@types/bcryptjs": "npm:^2.4.6"
+    "@types/config": "npm:^3.3.4"
+    "@types/cookie-parser": "npm:^1.4.7"
+    "@types/cors": "npm:^2.8.17"
+    "@types/dotenv": "npm:^8.2.0"
+    "@types/express": "npm:^4.17.21"
+    "@types/html-to-text": "npm:^9.0.4"
+    "@types/jsonwebtoken": "npm:^9.0.6"
+    "@types/morgan": "npm:^1.9.9"
+    "@types/node": "npm:^16.11.10"
+    "@types/nodemailer": "npm:^6.4.14"
+    "@types/pug": "npm:^2.0.10"
+    "@types/winston": "npm:^2.4.4"
+    bcryptjs: "npm:^2.4.3"
+    body-parser: "npm:^1.19.1"
+    config: "npm:^3.3.11"
+    cookie-parser: "npm:^1.4.6"
+    cors: "npm:^2.8.5"
+    dotenv: "npm:^16.4.5"
+    envalid: "npm:^8.0.0"
+    express: "npm:^4.17.2"
+    html-to-text: "npm:^9.0.5"
+    jsonwebtoken: "npm:^9.0.2"
+    morgan: "npm:^1.10.0"
+    nodemailer: "npm:^6.9.13"
+    pg: "npm:^8.4.0"
+    pug: "npm:^3.0.2"
+    redis: "npm:^4.6.13"
+    reflect-metadata: "npm:^0.1.13"
+    ts-node: "npm:10.9.1"
+    ts-node-dev: "npm:^2.0.0"
+    typeorm: "npm:0.3.20"
+    typescript: "npm:4.5.2"
+    winston: "npm:^3.13.0"
+    zod: "npm:^3.22.4"
+  languageName: unknown
+  linkType: soft
 
 "iconv-lite@npm:0.4.24":
   version: 0.4.24
