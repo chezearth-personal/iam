@@ -28,11 +28,21 @@ export const findUser = async (query: Object) => {
   return await userRepository.findOneBy(query);
 }
 
-export const updateUserPassword = async (user: User, input: UpdatePasswordInput) => {
+export const deleteUser = async (user: User) => {
+  const id = user.id;
+  return await userRepository
+    .createQueryBuilder
+    .softDelete()
+    .where('id = :id', { id })
+    .execute() as User;
+}
+// export const updateUserPassword = async (user: User, input: UpdatePasswordInput) => {
   // logger.log('DEBUG', `Input: ${JSON.stringify(input)}`);
   // logger.log('DEBUG', `Old user: ${JSON.stringify(user)}`);
-  return await userRepository.save(Object.assign(user, input));
-}
+  // const newUser = { ...user, ...{ password: input } };
+  // return await createUser(newUser);
+  // return await userRepository.save(Object.assign(user, input));
+// }
 
 /** ? Sign access and refresh tokens */
 export const signTokens = async (user: User) => {

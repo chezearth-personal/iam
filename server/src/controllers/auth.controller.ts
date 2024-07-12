@@ -13,7 +13,7 @@ import {
   findUser,
   findUserByEmail,
   findUserById,
-  updateUserPassword,
+  deleteUser,
   signTokens
 } from '../services/user.service';
 import { AppError } from '../utils/appError';
@@ -241,11 +241,23 @@ export const resetPasswordHandler = async (
     if (lastUpdated && now - lastUpdated > 1000 * 60 * config.get<number>('resetPasswordExpiresIn')) {
       return next(new AppError(400, 'Password reset link has expired'));
     }
-    /** 3. Update the user's password */
-    await updateUserPassword(user, {
-      password,
+    /** 3. Create a new user with the new password */
+    console.log("verified? ", user.verified, " verificationcode===null", user.verificationcode===null);
+    const newUser = await createUser({
+      ...user,
+      ...{ password },
       ...{ verified: true, verificationcode: null }
     });
+    if (!newUser) {
+      return next(new AppError(400, 'Password could not be updated'));
+    }
+    console.log("verified? ", newUser.verified, " verificationcode===null", newUser.verificationcode===null);
+    const oldUser = await deleteUser(user);
+    console.log('oldUser', oldUser);
+    // await updateUserPassVword(user, {
+      // password,
+      // ...{ verified: true, verificationcode: null }
+    // });
     /** 4. Send the reponse */
     return res.status(200).json({
       status: 'success',
@@ -253,7 +265,7 @@ export const resetPasswordHandler = async (
     });
   } catch (error: any) {
     next(error);
-  } 
+  }
 }
 
 export const refreshAccessTokenHandler = async (
