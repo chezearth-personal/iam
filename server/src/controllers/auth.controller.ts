@@ -252,7 +252,7 @@ export const resetPasswordHandler = async (
       return next(new AppError(400, 'Password could not be updated'));
     }
     console.log("verified? ", newUser.verified, " verificationcode===null", newUser.verificationcode===null);
-    const oldUser = await deleteUser(user);
+    // const oldUser = await deleteUser(user);
     console.log('oldUser', oldUser);
     // await updateUserPassVword(user, {
       // password,

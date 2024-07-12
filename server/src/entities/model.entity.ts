@@ -15,6 +15,6 @@ export abstract class Model extends BaseEntity {
   @UpdateDateColumn({ type: 'timestamptz' })
   updated_at: Date;
 
-  @DeleteDateColumn({ type: 'timestamptz' })
-  deleted_at: Date;
+  // @DeleteDateColumn({ type: 'timestamptz' })
+  // deleted_at: Date;
 }

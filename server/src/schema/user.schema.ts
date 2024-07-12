@@ -55,11 +55,11 @@ export const resetPasswordSchema = object({
   })
 });
 
-export const updatePasswordSchema = object({
-  password: string(),
-  verificationcode: z.nullable(z.string()),
-  verified: z.boolean()
-});
+// export const deletePasswordSchema = object({
+  // password: string(),
+  // verificationcode: z.nullable(z.string()),
+  // verified: z.boolean()
+// });
 
 export type CreateUserInput = Omit<
   TypeOf<typeof createUserSchema>['body'],

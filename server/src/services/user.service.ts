@@ -1,6 +1,6 @@
 import config from 'config';
 import { User } from '../entities/user.entity';
-import { CreateUserInput, UpdatePasswordInput } from '../schema/user.schema';
+import { CreateUserInput } from '../schema/user.schema';
 import { redisClient } from '../utils/connectRedis';
 import { AppDataSource } from '../utils/data-source';
 import { signJwt } from '../utils/jwt';
@@ -30,11 +30,11 @@ export const findUser = async (query: Object) => {
 
 export const deleteUser = async (user: User) => {
   const id = user.id;
-  return await userRepository
-    .createQueryBuilder
-    .softDelete()
-    .where('id = :id', { id })
-    .execute() as User;
+  return await AppDataSource.manager.delete(User, id);
+    // .createQueryBuilder
+    // .delete()
+    // .where('id = :id', { id })
+    // .execute() as User;
 }
 // export const updateUserPassword = async (user: User, input: UpdatePasswordInput) => {
   // logger.log('DEBUG', `Input: ${JSON.stringify(input)}`);
