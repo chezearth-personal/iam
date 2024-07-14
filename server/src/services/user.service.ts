@@ -28,9 +28,12 @@ export const findUser = async (query: Object) => {
   return await userRepository.findOneBy(query);
 }
 
-export const deleteUser = async (user: User) => {
-  const id = user.id;
-  return await AppDataSource.manager.delete(User, id);
+export const updateUserVerification = async (
+  user: User,
+  verified: boolean,
+  verificationcode: string|null
+) => {
+  return await userRepository.update(user.id, { verified, verificationcode });
     // .createQueryBuilder
     // .delete()
     // .where('id = :id', { id })

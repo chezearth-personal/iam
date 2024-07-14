@@ -13,7 +13,7 @@ import {
   findUser,
   findUserByEmail,
   findUserById,
-  // deleteUser,
+  updateUserVerification,
   signTokens
 } from '../services/user.service';
 import { AppError } from '../utils/appError';
@@ -52,28 +52,28 @@ export const registerUserHandler = async (
   res: Response,
   next: NextFunction
 ) => {
-  // console.log('registerUserHandler() ...')
   try {
     const { firstname, lastname, password, email } = req.body;
-    console.log('user =', { email, password });
+    // console.log('registerUserHandler(): user =', { email, password });
     const newUser = await createUser({
       firstname,
       lastname,
       email: email.toLowerCase(),
       password
     });
+    console.log('registerUserHandler(): newUser =', newUser);
     const { hashedVerificationCode, verificationcode } = User.createVerificationCode();
-    newUser.verificationcode = hashedVerificationCode;
-    await newUser.save();
+    const updatedUser = await updateUserVerification(newUser, false, hashedVerificationCode);
+    if (!updatedUser) {
+      return next(new AppError(400, 'User can not be registered'));
+    }
 
     /** Send verification email */
-    // console.log('Send verification email ...')
     const redirectUrl = `${config.get<string>(
       'origin'
     )}/${config.get<string>(
       'verifyEmailPath'
     )}/${verificationcode}`;
-    // console.log('redirectUrl =', redirectUrl);
     try {
       await new Email(newUser, redirectUrl).sendVerificationCode();
       res.status(202).json({
@@ -118,11 +118,13 @@ export const verifyEmailHandler = async (
       return next(new AppError(401, 'Could not verify email'));
     }
     const email = user.email;
-    user.verified = true;
-    user.verificationcode = null;
+    // user.verified = true;
+    // user.verificationcode = null;
+    await updateUserVerification(user, true, null);
     // user.skip = true;
-    await user.save();
-    console.log('user =', user);
+    // await 
+    // await user.save();
+    // console.log('user =', user);
     const modUser = await findUserByEmail({ email });
     console.log('modUser =', modUser);
     res.status(200).json({
@@ -134,6 +136,53 @@ export const verifyEmailHandler = async (
   }
 };
 
+/**
+  * This function is used for 'Forgot password', to confirm the email of a user
+  * @param req Request object
+  * @param res Response object
+  * @param next NextFunction object
+  */
+export const confirmEmailHandler = async (
+  req: Request<{}, {}, ConfirmEmailInput>,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    /** 1. Find the user by email */
+    const { email } = req.body;
+    const user = await findUserByEmail({ email });
+    if (!user) {
+      return next(new AppError(404, 'The user with that email cannot be found'));
+    }
+    /** 2. create a new verification code and re-hash the old passpord */
+    /** (make the previous password unusable) */
+    const { hashedVerificationCode, verificationcode } = User.createVerificationCode();
+    user.verificationcode = hashedVerificationCode;
+    user.verified = false;
+    await user.save();
+    /** 3. Send confirmation email */
+    const redirectUrl = `${config
+      .get<string>('origin')}/${config
+      .get<string>('resetPasswordPath')}/${verificationcode}`;
+    try {
+      await new Email(user, redirectUrl).sendPasswordResetToken();
+      res.status(202).json({
+        status: 'success',
+        message: 'Check your email for a confirmation link to update your password'
+      });
+    } catch (error) {
+      user.verificationcode = null
+      await user.save();
+      return res.status(509).json({
+        status: 'error',
+        message: 'There was an error sending the email, please try again.'
+      })
+    }
+  } catch (error: any) {
+    next(error);
+  }
+}
+
 export const loginUserHandler = async (
   req: Request<{}, {}, LoginUserInput>,
   res: Response,
@@ -141,9 +190,9 @@ export const loginUserHandler = async (
 ) => {
   try {
     const { email, password } = req.body;
-    console.log('email, password =', { email }, email, password);
+    // console.log('email, password =', { email }, email, password);
     const user = await findUserByEmail({ email });
-    console.log('user =', user);
+    console.log('loginUserHandler(): user =', user);
     /** 1. Check if user exists and password is valid */
     if (!user) {
       return next(new AppError(400, 'Invalid email or password'));
@@ -176,44 +225,6 @@ export const loginUserHandler = async (
   }
 };
 
-export const confirmEmailHandler = async (
-  req: Request<{}, {}, ConfirmEmailInput>,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const { email } = req.body;
-    const user = await findUserByEmail({ email });
-    if (!user) {
-      return next(new AppError(404, 'The user with that email cannot be found'));
-    }
-    const { hashedVerificationCode, verificationcode } = User.createVerificationCode();
-    user.verificationcode = hashedVerificationCode;
-    user.verified = false;
-    await user.save();
-    /** Send confirmation email */
-    const redirectUrl = `${config
-      .get<string>('origin')}/${config
-      .get<string>('resetPasswordPath')}/${verificationcode}`;
-    try {
-      await new Email(user, redirectUrl).sendPasswordResetToken();
-      res.status(202).json({
-        status: 'success',
-        message: 'Check your email for a confirmation link to update your password'
-      });
-    } catch (error) {
-      user.verificationcode = null
-      await user.save();
-      return res.status(509).json({
-        status: 'error',
-        message: 'There was an error sending the email, please try again.'
-      })
-    }
-  } catch (error: any) {
-    next(error);
-  }
-}
-
 export const resetPasswordHandler = async (
   req: Request<ResetPasswordInput>,
   res: Response,
@@ -226,10 +237,12 @@ export const resetPasswordHandler = async (
       .update(req.params.verificationcode)
       .digest('hex');
     /** 1. Find the user by querying on the verification code */
+    // console.log('resetPasswordHandler(): Find user by verification code ...');
     const user = await findUser({ verificationcode });
     if (!user) {
       return next(new AppError(401, 'Could not update password'));
     }
+    console.log('resetPasswordHandler(): user =', user);
     /** 2. Check to see that the time since the last change does not exceed the limit */
     const now = Number(new Date());
     // logger.log('DEBUG', `now = ${now}`);
@@ -241,23 +254,16 @@ export const resetPasswordHandler = async (
     if (lastUpdated && now - lastUpdated > 1000 * 60 * config.get<number>('resetPasswordExpiresIn')) {
       return next(new AppError(400, 'Password reset link has expired'));
     }
-    /** 3. Create a new user with the new password */
-    console.log("verified? ", user.verified, " verificationcode===null", user.verificationcode===null);
-    const newUser = await createUser({
-      ...user,
-      ...{ password },
-      ...{ verified: true, verificationcode: null }
-    });
+    // console.log("verified? ", user.verified, " verificationcode===null", user.verificationcode===null);
+    /** 3. Upadte the user with the new password (this will trigger hashing) */
+    user.password = password;
+    user.verified = true;
+    user.verificationcode = null;
+    const newUser = await user.save();
     if (!newUser) {
       return next(new AppError(400, 'Password could not be updated'));
     }
-    console.log("verified? ", newUser.verified, " verificationcode===null", newUser.verificationcode===null);
-    // const oldUser = await deleteUser(user);
-    // console.log('oldUser', oldUser);
-    // await updateUserPassVword(user, {
-      // password,
-      // ...{ verified: true, verificationcode: null }
-    // });
+    // console.log("verified? ", newUser.verified, " verificationcode===null", newUser.verificationcode===null);
     /** 4. Send the reponse */
     return res.status(200).json({
       status: 'success',

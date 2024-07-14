@@ -48,30 +48,24 @@ export class User extends Model {
   @BeforeInsert()
   async hashPassword() {
     console.log('@BeforeInsert');
-    console.log('"this" =', this);
+    // console.log('"this" =', this);
     this.password = await hash(this.password, 12);
   }
 
   /** ? Hash password before updating it in database */
-  // @BeforeUpdate()
-  // async updateHashPassword() {
-    // console.log('@BeforeUpdate');
+  @BeforeUpdate()
+  async updateHashPassword() {
+    console.log('@BeforeUpdate');
     // console.log('"this" =', this);
-    // if (this.skip) {
-      // this.skip = false;
-    // } {
-      // this.password = await hash(this.password, 12);
-    // }
-  // }
+    this.password = await hash(this.password, 12);
+  }
 
   /** ? Validate password */
   static async comparePasswords(
     candidatePassword: string,
     hashedPassword: string
   ) {
-    console.log('candidatePassword =', candidatePassword);
-    // console.log('hashed candidatePassword =', await hash(candidatePassword, 12));
-    console.log('hashedPassword =', hashedPassword);
+    // console.log('hashedPassword =', hashedPassword);
     return await compare(candidatePassword, hashedPassword);
   }
 
