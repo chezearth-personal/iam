@@ -13,7 +13,7 @@ import {
   findUser,
   findUserByEmail,
   findUserById,
-  deleteUser,
+  // deleteUser,
   signTokens
 } from '../services/user.service';
 import { AppError } from '../utils/appError';
@@ -253,7 +253,7 @@ export const resetPasswordHandler = async (
     }
     console.log("verified? ", newUser.verified, " verificationcode===null", newUser.verificationcode===null);
     // const oldUser = await deleteUser(user);
-    console.log('oldUser', oldUser);
+    // console.log('oldUser', oldUser);
     // await updateUserPassVword(user, {
       // password,
       // ...{ verified: true, verificationcode: null }
