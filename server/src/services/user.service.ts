@@ -15,8 +15,7 @@ export const createUser = async (input: CreateUserInput) => {
 };
 
 export const findUserByEmail = async ({ email }: { email: string }) => {
-  console.log('email obj =', { email });
-  // console.log('userRepository =', userRepository);
+  // console.log('email obj =', { email });
   return await userRepository.findOneBy({ email });
 };
 
@@ -34,18 +33,7 @@ export const updateUserVerification = async (
   verificationcode: string|null
 ) => {
   return await userRepository.update(user.id, { verified, verificationcode });
-    // .createQueryBuilder
-    // .delete()
-    // .where('id = :id', { id })
-    // .execute() as User;
 }
-// export const updateUserPassword = async (user: User, input: UpdatePasswordInput) => {
-  // logger.log('DEBUG', `Input: ${JSON.stringify(input)}`);
-  // logger.log('DEBUG', `Old user: ${JSON.stringify(user)}`);
-  // const newUser = { ...user, ...{ password: input } };
-  // return await createUser(newUser);
-  // return await userRepository.save(Object.assign(user, input));
-// }
 
 /** ? Sign access and refresh tokens */
 export const signTokens = async (user: User) => {
