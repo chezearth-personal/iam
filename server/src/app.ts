@@ -39,17 +39,14 @@ AppDataSource.initialize()
     app.use(cookieParser());
     /** 4. CORS */
     app.use(
-      // cors()
       cors({
         origin: config.get<string>('origin'),
         credentials: true
       })
     );
-
     /** ROUTES */
     app.use('/api/v1/auth/', AuthRouter);
     app.use('/api/v1/users/', UserRouter);
-
     /** HEALTH CHECK */
     app.get('/api/v1/health-check', async (_, res: Response) => {
       const message = await redisClient.get('try');
