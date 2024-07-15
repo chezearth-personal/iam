@@ -77,7 +77,7 @@ AppDataSource.initialize()
     const port = config.get<number>('port');
     app.listen(port);
     logger.log('INFO',`Server started on port ${port}`);
-    
+
   })
   .catch(error => {
     logger.log('ERROR', error);
