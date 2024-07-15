@@ -9,8 +9,10 @@ const postgresConfig = config.get<{
   username: string;
   password: string;
   database: string;
+  schema: string;
 }>('postgresConfig');
 
+console.log('postgresConfig =', postgresConfig);
 export const AppDataSource = new DataSource({
   ...postgresConfig,
   type: 'postgres',

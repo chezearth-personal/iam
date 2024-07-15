@@ -5,7 +5,8 @@ export default {
     port: 'POSTGRES_PORT',
     username: 'POSTGRES_USER',
     password: 'POSTGRES_PASSWORD',
-    database: 'POSTGRES_DB'
+    database: 'POSTGRES_DB',
+    schema: 'POSTGRES_SCHEMA'
   },
 
   accessTokenPrivateKey: 'JWT_ACCESS_TOKEN_PRIVATE_KEY',

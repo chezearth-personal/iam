@@ -1,11 +1,12 @@
 name: iam
 
 services:
-  postgres: 
+  postgres:
     image: postgres:latest
     ports:
       - '6500:5432'
     volumes:
+      - ./server/init.sh:/docker-entrypoint-initdb.d/init.sh
       - postgresDB:/var/lib/postgresql/data
     env_file:
       - ./server/.env

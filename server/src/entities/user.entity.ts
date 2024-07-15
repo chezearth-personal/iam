@@ -8,7 +8,7 @@ export enum RoleEnumType {
   ADMIN = 'admin'
 }
 
-@Entity('users')
+@Entity('users', {schema: 'iam'})
 export class User extends Model {
 
   @Column()
