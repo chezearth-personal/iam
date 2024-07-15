@@ -20,4 +20,4 @@ export default {
     port: 'EMAIL_PORT',
     user: 'EMAIL_USER'
   }
-}
+};

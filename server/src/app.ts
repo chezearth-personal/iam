@@ -9,7 +9,7 @@ import { Router as AuthRouter } from './routes/auth.routes';
 import { Router as UserRouter } from './routes/user.routes';
 import { errorHandler, logger, successHandler } from './utils/logger';
 import { redisClient } from './utils/connectRedis';
-import { validateEnv } from './utils/validateEnv';
+import { validateEnv } from './utils/validate-env';
 /** Nodemailer is used for emails; included here to create a fake email acc*/
 // import nodemailer from 'nodemailer';
 
@@ -21,15 +21,14 @@ import { validateEnv } from './utils/validateEnv';
 
 AppDataSource.initialize()
   .then(async () => {
+    logger.log('INFO', 'Database initialized');
     /** Validate env */
     validateEnv();
-    // console.log(process.env);
+    /** Start express */
     const app = express();
-
     /** TEMPLATE ENGINE */
     app.set('view engine', 'pug');
     app.set('views', `${__dirname}/views`);
-
     /** MIDDLEWARE */
     /** 1. Body parser */
     app.use(express.json({ limit: '10kb' }));
