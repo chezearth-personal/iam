@@ -4,7 +4,6 @@ import pug from 'pug';
 import { convert } from 'html-to-text';
 import { User } from 'entities/user.entity';
 import { logger } from './logger';
-// import {number} from 'zod';
 
 /** ? SMTP configurations */
 const smtp = config.get<{
