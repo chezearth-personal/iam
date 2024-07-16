@@ -16,7 +16,7 @@ import {
   updateUserVerification,
   signTokens
 } from '../services/user.service';
-import { AppError } from '../utils/appError';
+import { AppError } from '../utils/app-error';
 import { Email } from '../utils/email';
 import { logger } from '../utils/logger';
 import { redisClient } from '../utils/connectRedis';

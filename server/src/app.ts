@@ -4,7 +4,7 @@ import config from 'config';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import { AppDataSource } from './utils/data-source';
-import { AppError } from './utils/appError';
+import { AppError } from './utils/app-error';
 import { Router as AuthRouter } from './routes/auth.routes';
 import { Router as UserRouter } from './routes/user.routes';
 import { errorHandler, logger, successHandler } from './utils/logger';
@@ -55,12 +55,10 @@ AppDataSource.initialize()
         message
       });
     });
-
     /** UNHANDLED ROUTE */
     app.use('*', (req: Request, res: Response, next: NextFunction) => {
       next(new AppError(404, `Route ${req.originalUrl} not found`));
     })
-
     /** GLOBAL ERROR HANDLER */
     app.use(
       (error: AppError, req: Request, res: Response, next: NextFunction) => {

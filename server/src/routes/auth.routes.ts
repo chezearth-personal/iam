@@ -8,8 +8,8 @@ import {
   registerUserHandler,
   verifyEmailHandler
 } from '../controllers/auth.controller';
-import { deserialiseUser } from '../middleware/deserialiseUser';
-import { requireUser } from '../middleware/requireUser';
+import { deserialiseUser } from '../middleware/deserialise-user';
+import { requireUser } from '../middleware/require-user';
 import { validate } from '../middleware/validate';
 import {
   createUserSchema,
