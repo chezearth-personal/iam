@@ -44,14 +44,12 @@ export class User extends Model {
   /** ? Hash password before saving to database */
   @BeforeInsert()
   async hashPassword() {
-    // console.log('@BeforeInsert');
     this.password = await hash(this.password, 12);
   }
 
   /** ? Hash password before updating it in database */
   @BeforeUpdate()
   async updateHashPassword() {
-    // console.log('@BeforeUpdate');
     this.password = await hash(this.password, 12);
   }
 
