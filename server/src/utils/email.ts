@@ -20,9 +20,6 @@ export class Email {
   from: string;
   /** ? Constructor */
   constructor(public user: User, public url: string) {
-    // console.log('user =', user);
-    // console.log('url =', url);
-    // console.log('[from] =', `Admin ${config.get<string>('emailFrom')}`);
     this.firstname = user.firstname;
     this.to = user.email;
     this.from = `Admin ${config.get<string>('emailFrom')}`;
@@ -30,10 +27,6 @@ export class Email {
 
   /** ? Transport */
   private newTransport() {
-    // if (process.env.NODE_ENV === 'production') {
-    //   logger.log('DEBUG', 'Hello');
-    // }
-
     return nodemailer.createTransport({
       ...smtp,
       auth: {
@@ -44,13 +37,13 @@ export class Email {
   }
 
   private async send(template: string, subject: string) {
-    /** Generate HTML template based on the template string */
+    /** ? Generate HTML template based on the template string */
     const html = pug.renderFile(`${__dirname}/../views/${template}.pug`, {
       firstname: this.firstname,
       subject,
       url: this.url,
     });
-    /** Create email options */
+    /** ? Create email options */
     const mailOptions = {
       from: this.from,
       to: this.to,
@@ -58,8 +51,7 @@ export class Email {
       text: convert(html),
       html
     };
-    // logger.log('DEBUG', `verification url = ${this.url}`);
-    /** Send email */
+    /** ? Send email */
     const info = await this.newTransport().sendMail(mailOptions);
     logger.log('DEBUG', nodemailer.getTestMessageUrl(info));
   }

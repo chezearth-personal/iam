@@ -4,7 +4,6 @@ import { CreateUserInput } from '../schema/user.schema';
 import { redisClient } from '../utils/connectRedis';
 import { AppDataSource } from '../utils/data-source';
 import { signJwt } from '../utils/jwt';
-// import { logger } from '../utils/logger';
 
 const userRepository = AppDataSource.getRepository(User);
 
@@ -15,7 +14,6 @@ export const createUser = async (input: CreateUserInput) => {
 };
 
 export const findUserByEmail = async ({ email }: { email: string }) => {
-  // console.log('email obj =', { email });
   return await userRepository.findOneBy({ email });
 };
 
@@ -37,11 +35,11 @@ export const updateUserVerification = async (
 
 /** ? Sign access and refresh tokens */
 export const signTokens = async (user: User) => {
-  /** 1. Create session */
+  /** ? 1. Create session */
   redisClient.set(user.id, JSON.stringify(user), {
     EX: config.get<number>('redisCacheExpiresIn') * 60
   });
-  /** 2. Create Access and Refresh tokens */
+  /** ? 2. Create Access and Refresh tokens */
   const access_token = signJwt(
     { sub: user.id },
     'accessTokenPrivateKey',
