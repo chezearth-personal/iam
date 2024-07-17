@@ -11,11 +11,11 @@ export enum RoleEnumType {
 @Entity('users', {schema: 'iam'})
 export class User extends Model {
 
-  @Column()
-  firstname: string;
+  @Column({ name: 'first_name' })
+  firstName: string;
 
-  @Column()
-  lastname: string;
+  @Column({ name: 'last_name' })
+  lastName: string;
 
   @Index('email_index')
   @Column({ unique: true })
@@ -36,10 +36,11 @@ export class User extends Model {
 
   @Index('verificationcode_index')
   @Column({
+    name: 'verification_code',
     type: 'text',
     nullable: true
   })
-  verificationcode!: string | null;
+  verificationCode!: string | null;
 
   /** ? Hash password before saving to database */
   @BeforeInsert()
@@ -62,12 +63,12 @@ export class User extends Model {
   }
 
   static createVerificationCode() {
-    const verificationcode = crypto.randomBytes(32).toString('hex');
+    const verificationCode = crypto.randomBytes(32).toString('hex');
     const hashedVerificationCode = crypto
       .createHash('sha256')
-      .update(verificationcode)
+      .update(verificationCode)
       .digest('hex');
-    return { verificationcode, hashedVerificationCode };
+    return { verificationCode, hashedVerificationCode };
   }
 
   toJSON(): User {

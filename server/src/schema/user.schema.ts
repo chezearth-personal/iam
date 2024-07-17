@@ -3,8 +3,8 @@ import { RoleEnumType } from '../entities/user.entity';
 
 export const createUserSchema = object({
   body: object({
-    firstname: string({ required_error: 'First name is required' }),
-    lastname: string({ required_error: 'Last name is required' }),
+    firstName: string({ required_error: 'First name is required' }),
+    lastName: string({ required_error: 'Last name is required' }),
     email: string({ required_error: 'Email address is required' })
       .email('Invalid email address'),
     password: string({ required_error: 'Password is required' })
@@ -20,7 +20,7 @@ export const createUserSchema = object({
 
 export const verifyEmailSchema = object({
   params: object({
-    verificationcode: string()
+    verificationCode: string()
   })
 });
 
@@ -42,7 +42,7 @@ export const confirmEmailSchema = object({
 
 export const resetPasswordSchema = object({
   params: object({
-    verificationcode: string()
+    verificationCode: string()
   }),
   body: object({
     password: string({ required_error: 'Password is required' })
@@ -57,7 +57,7 @@ export const resetPasswordSchema = object({
 
 export const updatePasswordSchema = object({
   password: string(),
-  verificationcode: z.nullable(z.string()),
+  verificationCode: z.nullable(z.string()),
   verified: z.boolean()
 });
 

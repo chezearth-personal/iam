@@ -23,7 +23,7 @@ const levels = {
     WARN: 'bold yellow',
     INFO: 'cyan',
     HTTP: 'blue',
-    DEBUG: 'black',
+    DEBUG: 'grey',
     TRACE: 'green'
   }
 }

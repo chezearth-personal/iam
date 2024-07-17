@@ -14,12 +14,12 @@ const smtp = config.get<{
 }>('smtp');
 
 export class Email {
-  firstname: string;
+  firstName: string;
   to: string;
   from: string;
   /** ? Constructor */
   constructor(public user: User, public url: string) {
-    this.firstname = user.firstname;
+    this.firstName = user.firstName;
     this.to = user.email;
     this.from = `Admin ${config.get<string>('emailFrom')}`;
   }
@@ -38,7 +38,7 @@ export class Email {
   private async send(template: string, subject: string) {
     /** ? Generate HTML template based on the template string */
     const html = pug.renderFile(`${__dirname}/../views/${template}.pug`, {
-      firstname: this.firstname,
+      firstName: this.firstName,
       subject,
       url: this.url,
     });

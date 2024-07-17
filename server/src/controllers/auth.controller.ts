@@ -57,14 +57,14 @@ export const registerUserHandler = async (
   next: NextFunction
 ) => {
   try {
-    const { firstname, lastname, password, email } = req.body;
+    const { firstName, lastName, password, email } = req.body;
     const newUser = await createUser({
-      firstname,
-      lastname,
+      firstName,
+      lastName,
       email: email.toLowerCase(),
       password
     });
-    const { hashedVerificationCode, verificationcode } = User.createVerificationCode();
+    const { hashedVerificationCode, verificationCode } = User.createVerificationCode();
     const updatedUser = await updateUserVerification(newUser, false, hashedVerificationCode);
     if (!updatedUser) {
       return next(new AppError(400, 'User can not be registered'));
@@ -75,7 +75,7 @@ export const registerUserHandler = async (
       'origin'
     )}/${config.get<string>(
       'verifyEmailPath'
-    )}/${verificationcode}`;
+    )}/${verificationCode}`;
     try {
       await new Email(newUser, redirectUrl).sendVerificationCode();
       res.status(202).json({
@@ -83,7 +83,7 @@ export const registerUserHandler = async (
         message: 'An email with a verification code has been sent to your email address'
       });
     } catch (error) {
-      newUser.verificationcode = null;
+      newUser.verificationCode = null;
       await newUser.save();
       return res.status(500).json({
         status: 'error',
@@ -113,11 +113,11 @@ export const verifyEmailHandler = async (
 ) => {
   // console.log('verifyEmailHandler ...');
   try {
-    const verificationcode = crypto
+    const verificationCode = crypto
       .createHash('sha256')
-      .update(req.params.verificationcode)
+      .update(req.params.verificationCode)
       .digest('hex');
-    const user = await findUser({ verificationcode });
+    const user = await findUser({ verificationCode });
     if (!user) {
       return next(new AppError(401, 'Could not verify email'));
     }
@@ -149,14 +149,14 @@ export const confirmEmailHandler = async (
     }
     /** ? 2. create a new verification code and re-hash the old passpord */
     /** ? (make the previous password unusable) */
-    const { hashedVerificationCode, verificationcode } = User.createVerificationCode();
-    user.verificationcode = hashedVerificationCode;
+    const { hashedVerificationCode, verificationCode } = User.createVerificationCode();
+    user.verificationCode = hashedVerificationCode;
     user.verified = false;
     await user.save();
     /** ? 3. Send confirmation email */
     const redirectUrl = `${config
       .get<string>('origin')}/${config
-      .get<string>('resetPasswordPath')}/${verificationcode}`;
+      .get<string>('resetPasswordPath')}/${verificationCode}`;
     try {
       await new Email(user, redirectUrl).sendPasswordResetToken();
       res.status(202).json({
@@ -164,7 +164,7 @@ export const confirmEmailHandler = async (
         message: 'Check your email for a confirmation link to update your password'
       });
     } catch (error) {
-      user.verificationcode = null
+      user.verificationCode = null
       await user.save();
       return res.status(509).json({
         status: 'error',
@@ -187,12 +187,12 @@ export const resetPasswordHandler = async (
 ) => {
   try {
     const { password } = req.body;
-    const verificationcode = crypto
+    const verificationCode = crypto
       .createHash('sha256')
-      .update(req.params.verificationcode)
+      .update(req.params.verificationCode)
       .digest('hex');
     /** ? 1. Find the user by querying on the verification code */
-    const user = await findUser({ verificationcode });
+    const user = await findUser({ verificationCode });
     if (!user) {
       return next(new AppError(401, 'Could not update password'));
     }
@@ -208,7 +208,7 @@ export const resetPasswordHandler = async (
     /** ? 3. Upadte the user with the new password (this will trigger hashing) */
     user.password = password;
     user.verified = true;
-    user.verificationcode = null;
+    user.verificationCode = null;
     const newUser = await user.save();
     if (!newUser) {
       return next(new AppError(400, 'Password could not be updated'));

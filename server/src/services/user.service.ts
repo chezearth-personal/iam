@@ -28,9 +28,9 @@ export const findUser = async (query: Object) => {
 export const updateUserVerification = async (
   user: User,
   verified: boolean,
-  verificationcode: string|null
+  verificationCode: string|null
 ) => {
-  return await userRepository.update(user.id, { verified, verificationcode });
+  return await userRepository.update(user.id, { verified, verificationCode });
 }
 
 /** ? Sign access and refresh tokens */

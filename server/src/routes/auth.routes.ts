@@ -23,13 +23,13 @@ export const Router = express.Router();
 Router.post('/register', validate(createUserSchema), registerUserHandler);
 /** Verify email (after registering, and sending a verification email) */
 Router.get(
-  '/verify-email/:verificationcode',
+  '/verify-email/:verificationCode',
   validate(verifyEmailSchema),
   verifyEmailHandler
 );
 /** Confirm email (after forgot password and sending a confirmation email) */
 Router.put(
-  '/reset-password/:verificationcode',
+  '/reset-password/:verificationCode',
   validate(resetPasswordSchema),
   resetPasswordHandler
 );
