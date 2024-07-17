@@ -12,7 +12,6 @@ const postgresConfig = config.get<{
   schema: string;
 }>('postgresConfig');
 
-// console.log('postgresConfig =', postgresConfig);
 export const AppDataSource = new DataSource({
   ...postgresConfig,
   type: 'postgres',

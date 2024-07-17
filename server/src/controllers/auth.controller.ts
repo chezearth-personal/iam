@@ -111,7 +111,6 @@ export const verifyEmailHandler = async (
   res: Response,
   next: NextFunction
 ) => {
-  // console.log('verifyEmailHandler ...');
   try {
     const verificationCode = crypto
       .createHash('sha256')
@@ -199,9 +198,6 @@ export const resetPasswordHandler = async (
     /** ? 2. Check to see that the time since the last change does not exceed the limit */
     const now = Number(new Date());
     const lastUpdated = user.updated_at && Number(new Date(user.updated_at));
-    // logger.log('DEBUG', `user.updated_at = ${user.updated_at}`);
-    // logger.log('DEBUG', `difference = ${now - lastUpdated}`);
-    // logger.log('DEBUG', `limit = ${1000 * 60 * config.get<number>('resetPasswordExpiresIn')}`);
     if (lastUpdated && now - lastUpdated > 1000 * 60 * config.get<number>('resetPasswordExpiresIn')) {
       return next(new AppError(400, 'Password reset link has expired'));
     }
