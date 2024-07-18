@@ -1,7 +1,5 @@
 # IAM (Identity and Access Manager)
 
---------------------------------------------------------------------------------
-
 ## Overview
 
 IAM is a simple Identity and Access Manager back end application. It aims to be
