@@ -34,7 +34,7 @@ export class User extends Model {
   @Column({ default: false })
   verified: boolean;
 
-  @Index('verificationcode_index')
+  @Index('verification_code_index')
   @Column({
     name: 'verification_code',
     type: 'text',
