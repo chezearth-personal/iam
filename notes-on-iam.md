@@ -1,9 +1,8 @@
 # 15 steps for perfect Authentication Flow in the Backend
 _By Mohamed Adel (from Medium)_
 
->2 min read
-
-Aug 30, 2023
+> 2 min read  
+> Aug 30, 2023
 
 ### 1. Understand the Requirements
 Before you start designing the authentication flow, thoroughly understand the
