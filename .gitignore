@@ -16,6 +16,7 @@
 /dist
 
 # database migrations
+*/**/migrations/*.ts
 
 # misc
 .DS_Store
