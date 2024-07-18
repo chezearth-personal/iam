@@ -52,7 +52,7 @@ export class Email {
     };
     /** ? Send email */
     const info = await this.newTransport().sendMail(mailOptions);
-    logger.log('DEBUG', nodemailer.getTestMessageUrl(info));
+    // logger.log('DEBUG', nodemailer.getTestMessageUrl(info));
   }
 
   /** ? Method to send emails */
