@@ -29,6 +29,7 @@
     "typeorm": "typeorm-ts-node-commonjs",
     "migrate": "rm -rf build && yarn build && yarn typeorm migration:generate -d ./src/utils/data-source.ts ./src/migrations/added-user-entity",
     "db:push": "rm -rf build && yarn build && yarn typeorm migration:run -d src/utils/data-source.ts",
+    "db:prepare": "yarn migrate && yarn db:push",
     "serve": "tsc-watch --onSuccess \"nodemon build/app.js\"",
     "test": "test"
   },
