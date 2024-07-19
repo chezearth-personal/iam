@@ -1,5 +1,14 @@
 import { object, string, TypeOf, z } from 'zod';
 import { RoleEnumType } from '../entities/user.entity';
+// import path from 'path';
+
+const matchPassword = (data: any): boolean => {
+  return data.password === data.passwordConfirm;
+};
+const messageObj = {
+  path: ['passwordConfirm'],
+  message: 'Passwords do not match',
+};
 
 export const createUserSchema = object({
   body: object({
@@ -12,10 +21,7 @@ export const createUserSchema = object({
       .max(32, 'Password must be at most 32 characters'),
     passwordConfirm: string({ required_error: 'Please confirm your password' }),
     role: z.optional(z.nativeEnum(RoleEnumType)),
-  }).refine((data) => data.password === data.passwordConfirm, {
-    path: ['passwordConfirm'],
-    message: 'Passwords do not match',
-  })
+  }).refine(matchPassword, messageObj)
 });
 
 export const verifyEmailSchema = object({
@@ -49,10 +55,7 @@ export const resetPasswordSchema = object({
       .min(8, 'Password must be at least 8 characters')
       .max(32, 'Password must be at most 32 characters'),
     passwordConfirm: string({ required_error: 'Please confirm your password' })
-  }).refine((data) => data.password === data.passwordConfirm, {
-    path: ['passwordConfirm'],
-    message: 'Passwords do not match',
-  })
+  }).refine(matchPassword, messageObj)
 });
 
 export const updatePasswordSchema = object({
